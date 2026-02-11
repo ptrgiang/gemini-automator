@@ -18,15 +18,15 @@ A professional Chrome extension for automating batch image generation with Gemin
 
 ## Design Philosophy
 
-This extension features a **Technical Minimalism** aesthetic:
+This extension matches **Gemini's Dark Theme** using Material Design 3:
 
-- **Typography**: DM Mono for technical elements paired with Manrope for body text
-- **Color Palette**: Muted professional tones with amber accents
-- **Layout**: Clean, structured grid-based design with precise spacing
-- **Visual Language**: Subtle shadows and borders, no gradients
-- **User Experience**: Clear hierarchy, accessible colors, smooth transitions
+- **Typography**: Google Sans for headings, Google Sans Text for body - optimized for readability
+- **Color Palette**: Deep charcoal backgrounds (#131314) with Google Blue accents (#4285f4)
+- **Layout**: Spacious design with large corner radii (16-24px) and generous padding
+- **Visual Language**: Subtle glassmorphism effects with backdrop blur and soft shadows
+- **User Experience**: Cohesive with Gemini's interface, reduced eye strain, smooth transitions
 
-The design prioritizes clarity, professionalism, and functionality - perfect for a productivity tool.
+The design seamlessly integrates with Gemini's aesthetic while maintaining full functionality.
 
 ## Installation
 
@@ -121,14 +121,16 @@ Modify the delay range in the side panel UI to control the pace of generation:
 
 ### Color Scheme
 
-Edit CSS variables in `sidepanel.css` to customize the color palette:
+The extension uses Gemini's Material Design 3 dark palette:
 
 ```css
 :root {
-  --color-accent: #d97706;        /* Primary accent color */
-  --color-bg: #fafaf9;            /* Background color */
-  --color-surface: #ffffff;       /* Card backgrounds */
-  /* ... more variables */
+  --color-accent: #4285f4;              /* Google Blue */
+  --color-bg: #131314;                  /* Deep Charcoal */
+  --color-surface: #1e1f20;             /* Surface Gray */
+  --color-surface-elevated: #28292a;    /* Elevated Surface */
+  --color-text-primary: #e3e3e3;        /* Off-White */
+  /* ... more variables in sidepanel.css */
 }
 ```
 

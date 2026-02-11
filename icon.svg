@@ -1,14 +1,17 @@
 <svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Background -->
-  <rect width="128" height="128" rx="24" fill="#1c1917"/>
+  <!-- Background - Deep Charcoal -->
+  <rect width="128" height="128" rx="28" fill="#131314"/>
 
-  <!-- Grid Pattern -->
-  <rect x="24" y="24" width="32" height="32" stroke="#d97706" stroke-width="3" fill="none"/>
-  <rect x="72" y="24" width="32" height="32" stroke="#d97706" stroke-width="3" fill="none"/>
-  <rect x="24" y="72" width="32" height="32" stroke="#d97706" stroke-width="3" fill="none"/>
-  <rect x="72" y="72" width="32" height="32" stroke="#d97706" stroke-width="3" fill="none"/>
+  <!-- Main sparkle star - Google Blue -->
+  <path d="M64 20L72 52L104 60L72 68L64 100L56 68L24 60L56 52L64 20Z" fill="#4285f4"/>
 
-  <!-- Accent squares -->
-  <rect x="76" y="28" width="24" height="24" fill="#d97706"/>
-  <rect x="28" y="76" width="24" height="24" fill="#d97706"/>
+  <!-- Accent stars - Soft Blue with varying opacity -->
+  <circle cx="92" cy="36" r="6" fill="#a8c7fa" opacity="0.8"/>
+  <circle cx="36" cy="92" r="6" fill="#a8c7fa" opacity="0.8"/>
+
+  <circle cx="100" cy="88" r="4" fill="#4285f4" opacity="0.6"/>
+  <circle cx="28" cy="40" r="4" fill="#4285f4" opacity="0.6"/>
+
+  <circle cx="88" cy="100" r="3" fill="#a8c7fa" opacity="0.5"/>
+  <circle cx="40" cy="28" r="3" fill="#a8c7fa" opacity="0.5"/>
 </svg>

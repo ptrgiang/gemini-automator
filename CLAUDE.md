@@ -146,10 +146,16 @@ console.log('Received message:', request.action);
 ### UI Changes
 
 All UI in `sidepanel.html/css`. Design system uses:
-- CSS variables in `:root` for colors/spacing
-- DM Mono + Manrope fonts (loaded from Google Fonts)
-- Technical minimalism aesthetic (no gradients, amber accent)
-- Responsive grid for buttons: `grid-template-columns: 2fr 1fr 1fr`
+- **Material Design 3**: Matches Gemini's dark theme aesthetic
+- **Typography**: Google Sans (headings) + Google Sans Text (body)
+- **Color Palette**:
+  - Deep Charcoal (#131314) background
+  - Surface Gray (#1e1f20) containers
+  - Google Blue (#4285f4) accents
+  - Off-White (#e3e3e3) text
+- **Spacing**: Larger corner radii (16-24px) for modern feel
+- **Effects**: Glassmorphism with backdrop-filter blur
+- **Responsive**: Container queries for button text/icon scaling
 
 ## Important Constraints
 

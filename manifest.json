@@ -1,0 +1,40 @@
+{
+  "manifest_version": 3,
+  "name": "Gemini Automator",
+  "version": "1.0.0",
+  "description": "Automate batch image generation with Gemini AI",
+  "permissions": [
+    "activeTab",
+    "sidePanel",
+    "downloads",
+    "tabs",
+    "scripting",
+    "notifications"
+  ],
+  "host_permissions": [
+    "https://gemini.google.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://gemini.google.com/*",
+        "https://gemini.google.com/app",
+        "https://gemini.google.com/app/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_end",
+      "all_frames": false
+    }
+  ],
+  "action": {
+    "default_title": "Open Gemini Automator"
+  },
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}

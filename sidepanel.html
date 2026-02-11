@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auto Gemini Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <div class="container">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content">
+        <div class="logo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3" y="3" width="7" height="7" stroke="currentColor" stroke-width="2"/>
+            <rect x="14" y="3" width="7" height="7" stroke="currentColor" stroke-width="2"/>
+            <rect x="3" y="14" width="7" height="7" stroke="currentColor" stroke-width="2"/>
+            <rect x="14" y="14" width="7" height="7" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          <h1>Gemini Automator</h1>
+        </div>
+        <span class="version">v1.0</span>
+      </div>
+      <p class="tagline">Batch image generation workflow</p>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+      <!-- Prompts Section -->
+      <section class="section">
+        <div class="section-header">
+          <h2>Prompts</h2>
+          <span class="badge" id="promptCount">0</span>
+        </div>
+        <div class="input-group">
+          <textarea
+            id="promptList"
+            class="prompt-textarea"
+            placeholder="Enter your prompts, separated by blank lines...
+
+Example:
+
+A serene mountain landscape at dawn
+
+A futuristic cityscape with flying vehicles
+
+Abstract geometric patterns in warm tones"
+            rows="10"
+            spellcheck="false"
+          ></textarea>
+          <div class="input-hint">Separate prompts with blank lines</div>
+        </div>
+      </section>
+
+      <!-- Settings Section -->
+      <section class="section">
+        <div class="section-header">
+          <h2>Settings</h2>
+        </div>
+        <div class="settings-grid">
+          <div class="setting-item">
+            <label for="minDelay">Min Delay</label>
+            <div class="input-with-unit">
+              <input type="number" id="minDelay" value="10" min="5" max="60">
+              <span class="unit">sec</span>
+            </div>
+          </div>
+          <div class="setting-item">
+            <label for="maxDelay">Max Delay</label>
+            <div class="input-with-unit">
+              <input type="number" id="maxDelay" value="20" min="10" max="120">
+              <span class="unit">sec</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Controls Section -->
+      <section class="section">
+        <div class="controls">
+          <button id="startBtn" class="btn btn-primary">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M3 2L13 8L3 14V2Z" fill="currentColor"/>
+            </svg>
+            <span>Start Generation</span>
+          </button>
+          <button id="pauseBtn" class="btn btn-secondary" disabled>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <rect x="4" y="2" width="3" height="12" fill="currentColor"/>
+              <rect x="9" y="2" width="3" height="12" fill="currentColor"/>
+            </svg>
+            <span>Pause</span>
+          </button>
+          <button id="stopBtn" class="btn btn-secondary" disabled>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <rect x="3" y="3" width="10" height="10" fill="currentColor"/>
+            </svg>
+            <span>Stop</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Progress Section -->
+      <section class="section progress-section" id="progressSection" style="display: none;">
+        <div class="section-header">
+          <h2>Progress</h2>
+          <span class="status-pill" id="statusPill">Ready</span>
+        </div>
+        <div class="progress-stats">
+          <div class="stat">
+            <span class="stat-label">Completed</span>
+            <span class="stat-value"><span id="currentProgress">0</span> / <span id="totalProgress">0</span></span>
+          </div>
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar">
+            <div id="progressFill" class="progress-fill"></div>
+          </div>
+          <span class="progress-percentage" id="progressPercentage">0%</span>
+        </div>
+      </section>
+
+      <!-- Logs Section -->
+      <section class="section">
+        <div class="section-header">
+          <h2>Activity Log</h2>
+          <button id="clearLogsBtn" class="btn-text">Clear</button>
+        </div>
+        <div id="logArea" class="log-area"></div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <span>Built for productivity</span>
+    </footer>
+
+  </div>
+
+  <script src="sidepanel.js"></script>
+</body>
+</html>

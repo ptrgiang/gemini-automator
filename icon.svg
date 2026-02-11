@@ -1,0 +1,14 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="128" height="128" rx="24" fill="#1c1917"/>
+
+  <!-- Grid Pattern -->
+  <rect x="24" y="24" width="32" height="32" stroke="#d97706" stroke-width="3" fill="none"/>
+  <rect x="72" y="24" width="32" height="32" stroke="#d97706" stroke-width="3" fill="none"/>
+  <rect x="24" y="72" width="32" height="32" stroke="#d97706" stroke-width="3" fill="none"/>
+  <rect x="72" y="72" width="32" height="32" stroke="#d97706" stroke-width="3" fill="none"/>
+
+  <!-- Accent squares -->
+  <rect x="76" y="28" width="24" height="24" fill="#d97706"/>
+  <rect x="28" y="76" width="24" height="24" fill="#d97706"/>
+</svg>

@@ -22,6 +22,7 @@ const elements = {
   promptCount: document.getElementById('promptCount'),
   minDelay: document.getElementById('minDelay'),
   maxDelay: document.getElementById('maxDelay'),
+  setupBtn: document.getElementById('setupBtn'),
   startBtn: document.getElementById('startBtn'),
   pauseBtn: document.getElementById('pauseBtn'),
   stopBtn: document.getElementById('stopBtn'),
@@ -203,10 +204,6 @@ async function startBatchProcess(tabId) {
 
     if (!state.isRunning) break;
 
-    // Update current index
-    state.currentIndex = i;
-    updateProgress();
-
     const prompt = state.prompts[i].trim();
     const promptPreview = prompt.length > 60
       ? prompt.substring(0, 60) + '...'
@@ -227,10 +224,10 @@ async function startBatchProcess(tabId) {
         if (tab.discarded) {
           await chrome.tabs.reload(tabId);
           await sleep(3000);
-          log('⚠️ Gemini tab was suspended, reloaded it', 'warning');
+          log('Gemini tab was suspended, reloaded it', 'warning');
         }
       } catch (error) {
-        log('❌ Gemini tab was closed - stopping batch process', 'error');
+        log('Gemini tab was closed - stopping batch process', 'error');
         state.isRunning = false;
         break;
       }
@@ -262,6 +259,10 @@ async function startBatchProcess(tabId) {
 
       log('Generation complete', 'success');
 
+      // Update progress immediately after completion
+      state.currentIndex = i + 1;
+      updateProgress();
+
       // Step 4: Delay before next prompt
       if (i < state.prompts.length - 1) {
         const minDelay = parseInt(elements.minDelay.value);
@@ -279,7 +280,7 @@ async function startBatchProcess(tabId) {
       // Check if it's a connection error (tab closed/navigated)
       if (error.message.includes('Could not establish connection') ||
           error.message.includes('Receiving end does not exist')) {
-        log('❌ Lost connection to Gemini tab - stopping', 'error');
+        log('Lost connection to Gemini tab - stopping', 'error');
         state.isRunning = false;
         break;
       }
@@ -291,7 +292,7 @@ async function startBatchProcess(tabId) {
     state.currentIndex = state.prompts.length;
     updateProgress();
     setCompletedState();
-    log('🎉 All prompts completed successfully', 'success');
+    log('All prompts completed successfully', 'success');
 
     // Show notification for background completion
     try {
@@ -314,6 +315,48 @@ async function startBatchProcess(tabId) {
 // EVENT HANDLERS
 // ============================================
 elements.promptList.addEventListener('input', parsePrompts);
+
+elements.setupBtn.addEventListener('click', async () => {
+  // Validate Gemini tab
+  let tab;
+  try {
+    tab = await validateGeminiTab();
+  } catch (error) {
+    log(error.message, 'error');
+    return;
+  }
+
+  // Ensure content script is loaded
+  try {
+    await chrome.tabs.sendMessage(tab.id, { action: 'ping' });
+  } catch (error) {
+    try {
+      await chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        files: ['content.js']
+      });
+      await sleep(1000);
+    } catch (injectError) {
+      log('Failed to inject content script: ' + injectError.message, 'error');
+      return;
+    }
+  }
+
+  // Disable setup button during setup
+  elements.setupBtn.disabled = true;
+
+  // Setup Gemini
+  try {
+    log('Configuring Gemini...', 'info');
+    await chrome.tabs.sendMessage(tab.id, { action: 'setupGemini' });
+    log('Gemini configured: Create Image tool + Pro model selected', 'success');
+  } catch (error) {
+    log('Setup failed: ' + error.message, 'error');
+    log('Try manually selecting Create Image tool and Pro model', 'info');
+  } finally {
+    elements.setupBtn.disabled = false;
+  }
+});
 
 elements.startBtn.addEventListener('click', async () => {
   parsePrompts();
@@ -361,9 +404,9 @@ elements.startBtn.addEventListener('click', async () => {
   // Update UI
   setRunningState();
   updateProgress();
-  log('🚀 Starting batch generation process', 'success');
-  log('⚠️ Keep Gemini tab visible/active - automation requires active tab', 'warning');
-  log('💡 Tip: Open Gemini in separate window to work in another window', 'info');
+  log('Starting batch generation process', 'success');
+  log('Keep Gemini tab visible/active - automation requires active tab', 'warning');
+  log('Tip: Open Gemini in separate window to work in another window', 'info');
 
   // Auto-scroll to activity log
   setTimeout(() => {
@@ -382,12 +425,12 @@ elements.pauseBtn.addEventListener('click', () => {
     // Resume
     state.isPaused = false;
     setResumedState();
-    log('▶️ Resumed batch process', 'info');
+    log('Resumed batch process', 'info');
   } else {
     // Pause
     state.isPaused = true;
     setPausedState();
-    log('⏸️ Paused batch process', 'warning');
+    log('Paused batch process', 'warning');
   }
 });
 
@@ -395,7 +438,7 @@ elements.stopBtn.addEventListener('click', () => {
   state.isRunning = false;
   state.isPaused = false;
   setStoppedState();
-  log('⏹️ Stopped batch process', 'error');
+  log('Stopped batch process', 'error');
 });
 
 elements.clearLogsBtn.addEventListener('click', () => {
@@ -414,7 +457,7 @@ function sleep(ms) {
 // INITIALIZATION
 // ============================================
 function init() {
-  log('🚀 Gemini Automator ready', 'success');
+  log('Gemini Automator ready', 'success');
   parsePrompts();
   updateProgress();
 }

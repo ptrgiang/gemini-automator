@@ -4,6 +4,7 @@ A professional Chrome extension for automating batch image generation with Gemin
 
 ## Features
 
+- **Auto-Configuration**: Automatically selects "Create Image" tool and Pro model
 - **Batch Processing**: Generate multiple images from a list of prompts automatically
 - **Smart Delays**: Randomized delays between requests to avoid rate limiting
 - **Progress Tracking**: Real-time progress monitoring with detailed activity logs
@@ -44,11 +45,17 @@ The design prioritizes clarity, professionalism, and functionality - perfect for
 
 2. **Configure Timing**: Set the minimum and maximum delay between generations (recommended: 10-20 seconds)
 
-3. **Start Generation**: Click "Start Generation" to begin the automated batch process
+3. **Setup Gemini** (first time only): Click "Setup Gemini" to automatically:
+   - Select the "Create Image" tool
+   - Switch to Pro model
 
-4. **Monitor Progress**: Track completion status, current prompt, and activity logs in real-time
+   *Note: Only needed once per session or if you change tools/model manually*
 
-5. **Control Execution**: Use Pause/Resume or Stop buttons as needed
+4. **Start Generation**: Click "Start Generation" to begin processing your prompts
+
+5. **Monitor Progress**: Track completion status, current prompt, and activity logs in real-time
+
+6. **Control Execution**: Use Pause/Resume or Stop buttons as needed
 
 ### Prompt Format
 

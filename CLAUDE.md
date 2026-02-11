@@ -56,13 +56,17 @@ observer.observe(document.body, {
 
 ### 2. Material Design Selectors (content.js)
 
-Gemini uses Material Design components. Selectors target icon fonts:
+Gemini uses Material Design components. Selectors target icon fonts and specific DOM paths:
 
 ```javascript
 const SELECTORS = {
   promptTextarea: 'rich-textarea .ql-editor[contenteditable="true"]',
   generateBtn: 'mat-icon[fonticon="send"]',
-  stopBtn: 'mat-icon[fonticon="stop"]'
+  stopBtn: 'mat-icon[fonticon="stop"]',
+  toolsBtn: '#app-root > main > side-navigation-v2 > ...',
+  createImageOption: '#toolbox-drawer-menu > toolbox-drawer-item:nth-child(4)',
+  modelPickerBtn: '#app-root > main > side-navigation-v2 > ...',
+  proModelOption: '#mat-menu-panel-56 > div > div > button:nth-child(6)'
 };
 ```
 
@@ -70,6 +74,7 @@ const SELECTORS = {
 - Stop button visibility = generation in progress
 - Stop button disappears = generation complete
 - This is the most reliable completion signal
+- Auto-setup selects "Create Image" tool and Pro model before batch processing
 
 ### 3. Chrome Tab Requirements (Critical Limitation)
 
@@ -88,8 +93,12 @@ If automation breaks, Gemini likely updated their UI. Check these selectors firs
 - Prompt textarea structure
 - Send button icon name
 - Stop button icon name
+- Tools button and Create Image option paths
+- Model picker and Pro model option paths
 
 Use browser DevTools on gemini.google.com to inspect current structure.
+
+**Note:** The auto-setup feature (tool/model selection) uses long CSS selectors that may break with UI updates. If setup fails, it will log a warning but continue - users can manually configure Gemini settings.
 
 ### Content Script Not Loading
 1. Check manifest.json `matches` patterns include current Gemini URL

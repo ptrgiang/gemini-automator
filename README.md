@@ -82,10 +82,15 @@ Enter one prompt per line.
 gemini-automator/
 ├── manifest.json          # Extension configuration
 ├── background.js          # Service worker
-├── content.js             # Gemini page interaction
+├── content.js             # Gemini page automation
 ├── sidepanel.html         # Side panel UI
-├── sidepanel.css          # Styling
-├── sidepanel.js           # UI controller
+├── sidepanel.css          # Material Design 3 styling
+├── sidepanel.js           # UI controller & batch orchestration
+├── icon.svg               # Source icon (star theme)
+├── icon16.png             # Extension icon (16x16)
+├── icon48.png             # Extension icon (48x48)
+├── icon128.png            # Extension icon (128x128)
+├── CLAUDE.md              # Development guidelines
 └── README.md              # Documentation
 ```
 
@@ -95,20 +100,32 @@ The extension interacts with Gemini's UI using Material Design selectors. If Gem
 
 ```javascript
 const SELECTORS = {
+  // Core automation
   promptTextarea: 'rich-textarea .ql-editor[contenteditable="true"]',
   generateBtn: 'mat-icon[fonticon="send"]',
-  stopBtn: 'mat-icon[fonticon="stop"]'
+  stopBtn: 'mat-icon[fonticon="stop"]',
+
+  // Auto-setup (tool & model selection)
+  toolsBtn: '#app-root > main > side-navigation-v2 > ...',
+  createImageOption: '#toolbox-drawer-menu > toolbox-drawer-item:nth-child(4) > button',
+  modelPickerBtn: '#app-root > main > side-navigation-v2 > ...',
+  proModelOption: '[id^="mat-menu-panel-"] > div > div > button.bard-mode-list-button:nth-child(6)'
 };
 ```
 
-The stop button visibility is used to detect when generation is complete.
+**Key Detection Methods:**
+- Stop button visibility = generation in progress
+- Stop button disappears = generation complete (most reliable signal)
+- MutationObserver monitors DOM changes (not throttled in background tabs)
 
 ## Safety Features
 
+- **Smart Setup Verification**: Checks if tools/model are already configured before making changes
 - **Input Validation**: Validates prompts and settings before starting
-- **Tab Detection**: Ensures Gemini is open before processing
-- **Error Handling**: Graceful error handling with detailed logging
-- **Rate Limiting**: Configurable delays to respect API limits
+- **Tab Detection**: Ensures Gemini is open and active before processing
+- **Error Handling**: Graceful error handling with color-coded activity logs
+- **Rate Limiting**: Configurable delays (5-120 seconds) to respect API limits
+- **Progress Tracking**: Real-time updates after each completion, not during delays
 
 ## Customization
 
@@ -143,9 +160,20 @@ The extension uses Gemini's Material Design 3 dark palette:
 3. Reload the Gemini page
 4. Check the browser console for errors
 
+### Setup button fails
+
+If auto-setup fails, it's likely Gemini updated their UI:
+1. Manually select "Create Image" tool and Pro model
+2. Update selectors in `content.js` to match new structure
+3. The extension will still work - setup is optional
+
 ### Selectors not matching
 
-If Gemini updates their UI, update the selectors in `content.js` to match the new structure.
+If Gemini updates their UI:
+1. Open Chrome DevTools on gemini.google.com
+2. Inspect the target elements (prompt box, buttons, etc.)
+3. Update selectors in `content.js` to match new structure
+4. Pay special attention to dynamic menu panel IDs (use `[id^="..."]` patterns)
 
 ## License
 

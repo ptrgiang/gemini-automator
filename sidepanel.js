@@ -66,9 +66,9 @@ function parsePrompts() {
     return;
   }
 
-  // Split by double newlines (blank line separator)
+  // Split by single newlines
   state.prompts = text
-    .split(/\n\s*\n/)
+    .split(/\n/)
     .map(p => p.trim())
     .filter(p => p.length > 0);
 

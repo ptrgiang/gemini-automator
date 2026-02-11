@@ -40,7 +40,7 @@ The design prioritizes clarity, professionalism, and functionality - perfect for
 
 ### Basic Workflow
 
-1. **Enter Prompts**: Add your image generation prompts in the text area, separating each prompt with a blank line
+1. **Enter Prompts**: Add your image generation prompts in the text area, one prompt per line
 
 2. **Configure Timing**: Set the minimum and maximum delay between generations (recommended: 10-20 seconds)
 
@@ -54,13 +54,11 @@ The design prioritizes clarity, professionalism, and functionality - perfect for
 
 ```
 A serene mountain landscape at dawn
-
 A futuristic cityscape with flying vehicles
-
 Abstract geometric patterns in warm tones
 ```
 
-Each prompt should be separated by a blank line (double newline).
+Enter one prompt per line.
 
 ## Technical Details
 

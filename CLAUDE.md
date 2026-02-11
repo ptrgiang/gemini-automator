@@ -105,6 +105,18 @@ If automation times out or images don't generate:
 
 ## Development
 
+### Git Commits
+
+When creating commits, focus on clear, concise commit messages only. Do not add co-author attributions or metadata. Work on behalf of the user directly.
+
+Example:
+```
+Update prompt separator to use single newlines
+
+Changed from blank line (double newline) separator to single newline
+for simpler prompt input. Updated UI hints and README accordingly.
+```
+
 ### Testing Changes
 
 1. **Reload extension**: `chrome://extensions/` → click reload icon
@@ -133,6 +145,8 @@ All UI in `sidepanel.html/css`. Design system uses:
 ## Important Constraints
 
 **No additional markdown files**: Only README.md and CLAUDE.md should exist. Remove any others created during development.
+
+**Keep README.md in sync**: When making changes to source code, always check if README.md needs updates. User-facing features, settings, usage instructions, or behavior changes must be reflected in README.md immediately.
 
 **Chrome Manifest V3**: Uses service workers, not background pages. No persistent background context.
 

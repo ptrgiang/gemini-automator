@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gemini Automator
 // @namespace    https://github.com/ptrgiang/gemini-automator
-// @version      1.3.2
+// @version      1.3.3
 // @description  Batch image generation automation with automatic watermark removal for Gemini AI
 // @author       Truong Giang
 // @icon         https://www.google.com/s2/favicons?domain=gemini.google.com
@@ -1116,7 +1116,10 @@
     // Create panel
     const panel = document.createElement('div');
     panel.id = 'gemini-automator-panel';
-    panel.style.display = 'block';
+
+    // Check if panel was previously hidden
+    const wasPanelHidden = localStorage.getItem('gemini-automator-panel-hidden') === 'true';
+    panel.style.display = wasPanelHidden ? 'none' : 'flex';
 
     // Title
     const title = document.createElement('h2');
@@ -1224,14 +1227,22 @@
     toggleBtn.textContent = '⚡';
     toggleBtn.onclick = () => {
       const isVisible = panel.style.display === 'none';
-      panel.style.display = isVisible ? 'block' : 'none';
+      panel.style.display = isVisible ? 'flex' : 'none';
+      localStorage.setItem('gemini-automator-panel-hidden', isVisible ? 'false' : 'true');
       console.log('[Gemini Automator] Panel', isVisible ? 'opened' : 'closed');
     };
 
     document.body.appendChild(toggleBtn);
     document.body.appendChild(panel);
 
-    console.log('[Gemini Automator] Toggle button added to page');
+    console.log('[Gemini Automator] UI created successfully');
+    console.log('[Gemini Automator] Panel position:', {
+      display: panel.style.display,
+      right: panel.style.right,
+      bottom: panel.style.bottom,
+      width: panel.style.width
+    });
+    console.log('[Gemini Automator] Toggle button at bottom-right corner (⚡)');
 
     // Event listeners
     setupBtn.onclick = async () => {
@@ -1274,23 +1285,53 @@
     if (savedState) {
       try {
         const state = JSON.parse(savedState);
-        panel.style.left = state.left || 'auto';
-        panel.style.top = state.top || 'auto';
-        panel.style.right = state.right || '20px';
-        panel.style.bottom = state.bottom || '80px';
-        panel.style.width = state.width || '360px';
-        panel.style.height = state.height || 'auto';
+
+        // Validate saved position is within viewport
+        const isValidPosition = () => {
+          if (state.left && state.left !== 'auto') {
+            const left = parseInt(state.left);
+            return left >= 0 && left < window.innerWidth - 100;
+          }
+          if (state.right && state.right !== 'auto') {
+            const right = parseInt(state.right);
+            return right >= 0 && right < window.innerWidth - 100;
+          }
+          return true;
+        };
+
+        if (isValidPosition()) {
+          panel.style.left = state.left || 'auto';
+          panel.style.top = state.top || 'auto';
+          panel.style.right = state.right || '24px';
+          panel.style.bottom = state.bottom || '90px';
+          panel.style.width = state.width || '360px';
+          panel.style.height = state.height || 'auto';
+        } else {
+          // Reset to default if saved position is invalid
+          panel.style.left = 'auto';
+          panel.style.top = 'auto';
+          panel.style.right = '24px';
+          panel.style.bottom = '90px';
+          panel.style.width = '360px';
+          panel.style.height = 'auto';
+        }
       } catch (e) {
         // Use defaults if parse fails
-        panel.style.right = '20px';
-        panel.style.bottom = '80px';
+        panel.style.left = 'auto';
+        panel.style.top = 'auto';
+        panel.style.right = '24px';
+        panel.style.bottom = '90px';
         panel.style.width = '360px';
+        panel.style.height = 'auto';
       }
     } else {
       // Default position
-      panel.style.right = '20px';
-      panel.style.bottom = '80px';
+      panel.style.left = 'auto';
+      panel.style.top = 'auto';
+      panel.style.right = '24px';
+      panel.style.bottom = '90px';
       panel.style.width = '360px';
+      panel.style.height = 'auto';
     }
   }
 

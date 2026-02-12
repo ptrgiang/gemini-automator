@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gemini Automator
 // @namespace    https://github.com/ptrgiang/gemini-automator
-// @version      1.3.4
+// @version      1.3.5
 // @description  Batch image generation automation with automatic watermark removal for Gemini AI
 // @author       Truong Giang
 // @icon         https://www.google.com/s2/favicons?domain=gemini.google.com
@@ -698,6 +698,7 @@
       overflow-x: hidden;
       flex: 1;
       min-height: 0;
+      background: linear-gradient(135deg, rgba(25, 25, 25, 0.6) 0%, rgba(20, 20, 20, 0.6) 100%);
     }
 
     #gemini-automator-panel label {
@@ -944,17 +945,6 @@
       margin-bottom: 18px;
     }
 
-    #gemini-automator-panel > div:first-of-type > div:nth-child(4) {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-      gap: 10px;
-      margin: 18px 0;
-    }
-
-    #gemini-automator-panel > div:first-of-type > div:nth-child(4) button {
-      margin: 0;
-    }
-
     #gemini-automator-panel .status {
       padding: 16px 18px;
       background: rgba(66, 133, 244, 0.08);
@@ -1143,35 +1133,39 @@
     promptsDiv.appendChild(promptsTextarea);
     panel.appendChild(promptsDiv);
 
-    // Min Delay
-    const minDelayDiv = document.createElement('div');
-    minDelayDiv.className = 'setting-row';
+    // Delay Settings (Min and Max in one row)
+    const delayDiv = document.createElement('div');
+    delayDiv.className = 'setting-row';
+    delayDiv.style.display = 'grid';
+    delayDiv.style.gridTemplateColumns = '1fr auto 1fr auto';
+    delayDiv.style.gap = '12px';
+    delayDiv.style.alignItems = 'center';
+
     const minDelayLabel = document.createElement('label');
     minDelayLabel.textContent = 'Min Delay (sec):';
+    minDelayLabel.style.margin = '0';
     const minDelayInput = document.createElement('input');
     minDelayInput.type = 'number';
     minDelayInput.id = 'ga-min-delay';
     minDelayInput.value = '10';
     minDelayInput.min = '5';
     minDelayInput.max = '60';
-    minDelayDiv.appendChild(minDelayLabel);
-    minDelayDiv.appendChild(minDelayInput);
-    panel.appendChild(minDelayDiv);
 
-    // Max Delay
-    const maxDelayDiv = document.createElement('div');
-    maxDelayDiv.className = 'setting-row';
     const maxDelayLabel = document.createElement('label');
     maxDelayLabel.textContent = 'Max Delay (sec):';
+    maxDelayLabel.style.margin = '0';
     const maxDelayInput = document.createElement('input');
     maxDelayInput.type = 'number';
     maxDelayInput.id = 'ga-max-delay';
     maxDelayInput.value = '20';
     maxDelayInput.min = '10';
     maxDelayInput.max = '120';
-    maxDelayDiv.appendChild(maxDelayLabel);
-    maxDelayDiv.appendChild(maxDelayInput);
-    panel.appendChild(maxDelayDiv);
+
+    delayDiv.appendChild(minDelayLabel);
+    delayDiv.appendChild(minDelayInput);
+    delayDiv.appendChild(maxDelayLabel);
+    delayDiv.appendChild(maxDelayInput);
+    panel.appendChild(delayDiv);
 
     // Remove Watermarks
     const watermarkDiv = document.createElement('div');
@@ -1186,11 +1180,16 @@
     watermarkDiv.appendChild(watermarkCheckbox);
     panel.appendChild(watermarkDiv);
 
-    // Buttons
+    // Buttons (2x2 grid: Setup/Start, Pause/Stop)
     const buttonsDiv = document.createElement('div');
+    buttonsDiv.style.display = 'grid';
+    buttonsDiv.style.gridTemplateColumns = '1fr 1fr';
+    buttonsDiv.style.gap = '10px';
+    buttonsDiv.style.margin = '18px 0';
+
     const setupBtn = document.createElement('button');
     setupBtn.id = 'ga-setup';
-    setupBtn.textContent = 'Setup Gemini';
+    setupBtn.textContent = 'Setup';
     const startBtn = document.createElement('button');
     startBtn.id = 'ga-start';
     startBtn.textContent = 'Start';
@@ -1202,6 +1201,7 @@
     stopBtn.id = 'ga-stop';
     stopBtn.textContent = 'Stop';
     stopBtn.disabled = true;
+
     buttonsDiv.appendChild(setupBtn);
     buttonsDiv.appendChild(startBtn);
     buttonsDiv.appendChild(pauseBtn);

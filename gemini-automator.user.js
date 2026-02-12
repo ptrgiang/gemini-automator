@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gemini Automator with Watermark Remover
 // @namespace    https://github.com/gemini-automator
-// @version      1.1.0
+// @version      1.1.1
 // @description  Batch image generation automation + automatic watermark removal for Gemini AI
 // @author       Truong Giang
 // @icon         https://www.google.com/s2/favicons?domain=gemini.google.com
@@ -768,12 +768,16 @@
   // AUTOMATION STATE
   // ============================================
 
+  // Load watermark removal preference from localStorage
+  const savedWatermarkPref = localStorage.getItem('gemini-automator-remove-watermark');
+  const removeWatermarkDefault = savedWatermarkPref !== null ? savedWatermarkPref === 'true' : true;
+
   const state = {
     isRunning: false,
     isPaused: false,
     prompts: [],
     currentIndex: 0,
-    removeWatermark: true
+    removeWatermark: removeWatermarkDefault
   };
 
   /**
@@ -912,7 +916,11 @@
     stopBtn.onclick = stopAutomation;
 
     watermarkCheckbox.onchange = (e) => {
-      state.removeWatermark = e.target.checked;
+      const newValue = e.target.checked;
+      state.removeWatermark = newValue;
+      localStorage.setItem('gemini-automator-remove-watermark', newValue.toString());
+      console.log('[Gemini Automator] Watermark removal preference saved. Reloading page...');
+      setTimeout(() => location.reload(), 500);
     };
   }
 

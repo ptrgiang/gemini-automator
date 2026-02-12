@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gemini Automator with Watermark Remover
 // @namespace    https://github.com/gemini-automator
-// @version      1.2.0
+// @version      1.2.1
 // @description  Batch image generation automation + automatic watermark removal for Gemini AI
 // @author       Truong Giang
 // @icon         https://www.google.com/s2/favicons?domain=gemini.google.com
@@ -433,8 +433,15 @@
       const processedCanvas = await engine.removeWatermarkFromImage(normalSizeImg);
       const processedBlob = await canvasToBlob(processedCanvas);
       URL.revokeObjectURL(normalSizeBlobUrl);
-      imgElement.src = URL.createObjectURL(processedBlob);
+
+      const processedBlobUrl = URL.createObjectURL(processedBlob);
+      imgElement.src = processedBlobUrl;
       imgElement.dataset.watermarkProcessed = 'true';
+      imgElement.dataset.processedBlobUrl = processedBlobUrl;
+
+      // Update any download buttons/links
+      updateDownloadLinks(imgElement, processedBlob, processedBlobUrl);
+
       console.log('[Gemini Automator] Watermark removed');
     } catch (error) {
       console.warn('[Gemini Automator] Failed to remove watermark:', error);
@@ -443,6 +450,58 @@
     } finally {
       processingQueue.delete(imgElement);
     }
+  }
+
+  /**
+   * Update download buttons/links to use processed image
+   */
+  function updateDownloadLinks(imgElement, processedBlob, blobUrl) {
+    // Find parent container
+    let container = imgElement.closest('[data-test-id], .image-container, [class*="image"]');
+    if (!container) container = imgElement.parentElement;
+    if (!container) return;
+
+    // Find download buttons/links (multiple strategies)
+    const downloadElements = [
+      ...container.querySelectorAll('a[download]'),
+      ...container.querySelectorAll('button[aria-label*="Download"], button[aria-label*="download"]'),
+      ...container.querySelectorAll('[role="button"]'),
+      ...container.querySelectorAll('mat-icon[fonticon*="download"]')
+    ].filter(el => {
+      const text = el.textContent?.toLowerCase() || '';
+      const ariaLabel = el.getAttribute('aria-label')?.toLowerCase() || '';
+      const icon = el.querySelector('mat-icon')?.getAttribute('fonticon')?.toLowerCase() || '';
+      return text.includes('download') || ariaLabel.includes('download') || icon.includes('download');
+    });
+
+    downloadElements.forEach(el => {
+      // Store original handler if exists
+      if (!el.dataset.originalClick) {
+        el.dataset.originalClick = 'true';
+
+        // Override click to download processed image
+        el.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+
+          // Create download link
+          const a = document.createElement('a');
+          a.href = blobUrl;
+          a.download = `gemini-image-${Date.now()}.png`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+
+          console.log('[Gemini Automator] Downloaded cleaned image');
+        }, true);
+      }
+    });
+
+    // Also intercept right-click "Save image as"
+    imgElement.addEventListener('contextmenu', (e) => {
+      // The browser will use imgElement.src which we've already updated
+      console.log('[Gemini Automator] Right-click save will use cleaned image');
+    });
   }
 
   const processAllImages = () => {

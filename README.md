@@ -145,10 +145,18 @@ Setup → Fill Prompt → Generate → Wait for Completion → Remove Watermark 
 
 ### Watermark Removal Process
 
+**For Displayed Images:**
 1. **Detect** - MutationObserver watches for new images
 2. **Fetch** - Get high-resolution version via `GM_xmlhttpRequest` (bypasses CORS)
 3. **Process** - Apply alpha map algorithm to remove watermark
 4. **Replace** - Update image with clean version
+
+**For Downloads:**
+1. **Intercept** - Script intercepts all `fetch()` requests for Gemini images
+2. **Process** - Automatically processes the image blob before download
+3. **Return** - Provides the clean image without watermarks
+
+This means **all downloads (click download button or right-click → Save image as) will automatically use the watermark-removed version** when the "Remove Watermarks" checkbox is enabled.
 
 ### Technical Details
 

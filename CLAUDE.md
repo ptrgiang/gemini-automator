@@ -100,7 +100,39 @@ Uses 48px watermark for images ≤1024px, 96px for larger images.
 const original = (channel - alpha * 255) / (1 - alpha);
 ```
 
-### 2. MutationObserver for Image Detection
+### 2. Fetch Interception for Downloads
+
+Intercepts all fetch requests to process downloads automatically:
+
+```javascript
+const originalFetch = window.fetch;
+window.fetch = async function(...args) {
+  const url = typeof args[0] === 'string' ? args[0] : args[0]?.url;
+
+  if (url && GEMINI_URL_PATTERN.test(url)) {
+    const response = await originalFetch(...args);
+    const processedBlob = await processImageBlob(await response.blob());
+    return new Response(processedBlob, {
+      status: response.status,
+      statusText: response.statusText,
+      headers: response.headers
+    });
+  }
+
+  return originalFetch(...args);
+};
+```
+
+**Why:** Gemini uses `fetch()` for downloads. By intercepting at the network level, all downloads (click download button, right-click save) automatically get the watermark-removed version.
+
+**URL Pattern:**
+```javascript
+const GEMINI_URL_PATTERN = /^https:\/\/lh3\.googleusercontent\.com\/rd-gg(-dl)?\/.*=s\d+/;
+```
+
+Matches both display URLs (`rd-gg`) and download URLs (`rd-gg-dl`) with any size parameter.
+
+### 3. MutationObserver for Image Detection
 
 Watches for new Gemini-generated images with debouncing:
 
@@ -120,7 +152,7 @@ observer.observe(document.body, {
 
 **Why:** Detects images as they appear without polling. 100ms debounce prevents excessive processing during DOM updates.
 
-### 3. Robust Element Selection
+### 4. Robust Element Selection
 
 **Core Selectors** (stable, icon-based):
 ```javascript
@@ -166,7 +198,7 @@ const findOptionByText = (text) => {
 - **Language support**: Primary text search with positional fallback
 - **Clear errors**: Reports which step failed when UI changes
 
-### 4. UI Initialization Timing
+### 5. UI Initialization Timing
 
 **Critical:** Must wait for document.body before creating UI:
 
@@ -195,7 +227,7 @@ if (document.readyState === 'loading') {
 
 **Why:** Userscripts can run before document.body exists. Attempting to append elements to null body causes silent failures.
 
-### 5. Material Design 3 Styling
+### 6. Material Design 3 Styling
 
 Uses `GM_addStyle` to inject CSS that matches Gemini's dark theme:
 

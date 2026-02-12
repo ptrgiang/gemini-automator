@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gemini Automator with Watermark Remover
 // @namespace    https://github.com/gemini-automator
-// @version      1.0.5
+// @version      1.1.0
 // @description  Batch image generation automation + automatic watermark removal for Gemini AI
 // @author       Truong Giang
 // @icon         https://www.google.com/s2/favicons?domain=gemini.google.com
@@ -459,102 +459,308 @@
   // ============================================
 
   GM_addStyle(`
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700&display=swap');
+
     #gemini-automator-panel {
       position: fixed;
       bottom: 80px;
       right: 20px;
-      width: 320px;
-      background: #1e1f20;
-      border-radius: 16px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-      color: #e3e3e3;
-      font-family: 'Google Sans', sans-serif;
+      width: 360px;
+      background: #0f0f0f;
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
+      color: #f5f5f5;
+      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
       z-index: 999999;
-      padding: 20px;
-      max-height: 80vh;
-      overflow-y: auto;
+      padding: 0;
+      max-height: calc(100vh - 120px);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      backdrop-filter: blur(20px);
     }
+
     #gemini-automator-panel h2 {
-      margin: 0 0 16px 0;
-      font-size: 20px;
-      color: #4285f4;
+      margin: 0;
+      padding: 20px 24px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #f5f5f5;
+      letter-spacing: -0.01em;
+      border-bottom: 1px solid #2a2a2a;
+      background: #151515;
+      font-family: 'IBM Plex Mono', monospace;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.1em;
     }
+
+    #gemini-automator-panel > div:first-of-type {
+      padding: 24px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    #gemini-automator-panel label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      color: #a0a0a0;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 10px;
+    }
+
     #gemini-automator-panel textarea {
       width: 100%;
-      min-height: 120px;
-      background: #131314;
-      border: 1px solid #333;
+      min-height: 140px;
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
       border-radius: 8px;
-      color: #e3e3e3;
-      padding: 12px;
-      font-family: monospace;
-      font-size: 12px;
+      color: #f5f5f5;
+      padding: 14px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 13px;
       resize: vertical;
+      line-height: 1.6;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-sizing: border-box;
     }
+
+    #gemini-automator-panel textarea:focus {
+      outline: none;
+      border-color: #4285f4;
+      background: #1f1f1f;
+      box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1);
+    }
+
+    #gemini-automator-panel textarea::placeholder {
+      color: #555;
+      opacity: 1;
+    }
+
     #gemini-automator-panel input[type="number"] {
-      width: 60px;
-      background: #131314;
-      border: 1px solid #333;
+      width: 72px;
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
       border-radius: 6px;
-      color: #e3e3e3;
-      padding: 6px;
+      color: #f5f5f5;
+      padding: 10px 12px;
       text-align: center;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
+
+    #gemini-automator-panel input[type="number"]:focus {
+      outline: none;
+      border-color: #4285f4;
+      background: #1f1f1f;
+      box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1);
+    }
+
+    #gemini-automator-panel input[type="checkbox"] {
+      width: 40px;
+      height: 22px;
+      appearance: none;
+      background: #2a2a2a;
+      border-radius: 11px;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: none;
+    }
+
+    #gemini-automator-panel input[type="checkbox"]:checked {
+      background: #4285f4;
+    }
+
+    #gemini-automator-panel input[type="checkbox"]::before {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #f5f5f5;
+      top: 2px;
+      left: 2px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    #gemini-automator-panel input[type="checkbox"]:checked::before {
+      left: 20px;
+    }
+
     #gemini-automator-panel button {
       background: #4285f4;
       border: none;
-      border-radius: 8px;
-      color: white;
-      padding: 10px 20px;
+      border-radius: 6px;
+      color: #ffffff;
+      padding: 11px 18px;
       cursor: pointer;
-      font-weight: 500;
-      margin: 4px;
-      transition: background 0.2s;
+      font-weight: 600;
+      font-size: 13px;
+      font-family: 'Manrope', sans-serif;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      letter-spacing: -0.01em;
     }
-    #gemini-automator-panel button:hover {
+
+    #gemini-automator-panel button:hover:not(:disabled) {
       background: #5294f5;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(66, 133, 244, 0.3);
     }
+
+    #gemini-automator-panel button:active:not(:disabled) {
+      transform: translateY(0);
+      box-shadow: 0 2px 4px rgba(66, 133, 244, 0.2);
+    }
+
     #gemini-automator-panel button:disabled {
-      background: #555;
+      background: #2a2a2a;
+      color: #666;
       cursor: not-allowed;
+      transform: none;
     }
+
+    #gemini-automator-panel button#ga-setup {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      color: #f5f5f5;
+    }
+
+    #gemini-automator-panel button#ga-setup:hover:not(:disabled) {
+      background: #242424;
+      border-color: #3a3a3a;
+      box-shadow: none;
+    }
+
+    #gemini-automator-panel button#ga-pause {
+      background: #f59e0b;
+    }
+
+    #gemini-automator-panel button#ga-pause:hover:not(:disabled) {
+      background: #fbbf24;
+    }
+
+    #gemini-automator-panel button#ga-stop {
+      background: #ef4444;
+    }
+
+    #gemini-automator-panel button#ga-stop:hover:not(:disabled) {
+      background: #f87171;
+    }
+
     #gemini-automator-panel .setting-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin: 12px 0;
+      margin: 20px 0;
+      padding: 16px;
+      background: #151515;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
     }
-    #gemini-automator-panel .status {
-      padding: 8px;
-      background: #131314;
-      border-radius: 6px;
-      font-size: 12px;
-      margin: 8px 0;
-    }
-    #gemini-automator-panel .progress {
+
+    #gemini-automator-panel .setting-row label {
+      margin: 0;
+      color: #f5f5f5;
+      font-size: 13px;
       font-weight: 500;
-      color: #4285f4;
+      text-transform: none;
+      letter-spacing: -0.01em;
     }
+
+    #gemini-automator-panel > div:first-of-type > div:first-child {
+      margin-bottom: 20px;
+    }
+
+    #gemini-automator-panel > div:first-of-type > div:nth-child(4) {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 20px 0;
+    }
+
+    #gemini-automator-panel > div:first-of-type > div:nth-child(4) button {
+      margin: 0;
+    }
+
+    #gemini-automator-panel .status {
+      padding: 16px;
+      background: #151515;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      font-size: 12px;
+      margin-top: 20px;
+      font-family: 'IBM Plex Mono', monospace;
+    }
+
+    #gemini-automator-panel .progress {
+      font-weight: 600;
+      color: #4285f4;
+      margin-bottom: 8px;
+      font-size: 13px;
+      letter-spacing: 0.05em;
+    }
+
+    #gemini-automator-panel .status > div:last-child {
+      color: #a0a0a0;
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
     .toggle-panel {
       position: fixed;
       bottom: 20px;
       right: 20px;
       background: #4285f4;
-      border: none;
+      border: 1px solid #5294f5;
       border-radius: 50%;
-      width: 48px;
-      height: 48px;
+      width: 52px;
+      height: 52px;
       cursor: pointer;
-      box-shadow: 0 4px 16px rgba(66, 133, 244, 0.4);
       z-index: 999999;
       color: white;
       font-size: 24px;
-      transition: all 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(66, 133, 244, 0.4);
     }
+
     .toggle-panel:hover {
       background: #5294f5;
-      transform: scale(1.1);
-      box-shadow: 0 6px 20px rgba(66, 133, 244, 0.6);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(66, 133, 244, 0.5);
+    }
+
+    .toggle-panel:active {
+      transform: translateY(0);
+    }
+
+    /* Scrollbar styling */
+    #gemini-automator-panel > div:first-of-type::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    #gemini-automator-panel > div:first-of-type::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    #gemini-automator-panel > div:first-of-type::-webkit-scrollbar-thumb {
+      background: #2a2a2a;
+      border-radius: 4px;
+    }
+
+    #gemini-automator-panel > div:first-of-type::-webkit-scrollbar-thumb:hover {
+      background: #3a3a3a;
     }
   `);
 

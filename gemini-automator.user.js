@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gemini Automator
 // @namespace    https://github.com/ptrgiang/gemini-automator
-// @version      2.0.1
+// @version      2.0.2
 // @description  Batch image generation automation with automatic watermark removal for Gemini AI
 // @author       Truong Giang
 // @icon         https://www.google.com/s2/favicons?domain=gemini.google.com
@@ -643,13 +643,13 @@
 
     #gemini-automator-panel .resize-handle {
       position: absolute;
-      bottom: 8px;
-      right: 8px;
-      width: 20px;
-      height: 20px;
+      bottom: 16px;
+      right: 16px;
+      width: 16px;
+      height: 16px;
       cursor: nwse-resize;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 3px;
       z-index: 10;
       transition: all 0.2s ease;
     }
@@ -660,8 +660,8 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%) rotate(-45deg);
-      font-size: 10px;
-      color: rgba(255, 255, 255, 0.3);
+      font-size: 8px;
+      color: rgba(255, 255, 255, 0.4);
       letter-spacing: -2px;
     }
 
@@ -670,7 +670,7 @@
     }
 
     #gemini-automator-panel > div:first-of-type {
-      padding: 24px 28px 28px;
+      padding: 24px 32px 32px 28px;
       overflow-y: auto;
       overflow-x: hidden;
       flex: 1;

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gemini Automator with Watermark Remover
 // @namespace    https://github.com/gemini-automator
-// @version      1.2.1
+// @version      1.2.2
 // @description  Batch image generation automation + automatic watermark removal for Gemini AI
 // @author       Truong Giang
 // @icon         https://www.google.com/s2/favicons?domain=gemini.google.com
@@ -542,19 +542,21 @@
 
     #gemini-automator-panel h2 {
       margin: 0;
-      padding: 20px 24px;
-      font-size: 15px;
+      padding: 16px 20px;
+      font-size: 11px;
       font-weight: 600;
       color: #f5f5f5;
-      letter-spacing: -0.01em;
+      letter-spacing: 0.1em;
       border-bottom: 1px solid #2a2a2a;
       background: #151515;
       font-family: 'IBM Plex Mono', monospace;
       text-transform: uppercase;
-      font-size: 11px;
-      letter-spacing: 0.1em;
       cursor: move;
       user-select: none;
+      flex-shrink: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     #gemini-automator-panel .resize-handle {
@@ -573,34 +575,37 @@
     }
 
     #gemini-automator-panel > div:first-of-type {
-      padding: 24px;
+      padding: 16px;
       overflow-y: auto;
+      overflow-x: hidden;
       flex: 1;
+      min-height: 0;
     }
 
     #gemini-automator-panel label {
       display: block;
-      font-size: 12px;
+      font-size: 10px;
       font-weight: 500;
       color: #a0a0a0;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      font-size: 10px;
+      line-height: 1.3;
     }
 
     #gemini-automator-panel textarea {
       width: 100%;
-      min-height: 140px;
+      min-height: 80px;
+      max-height: 200px;
       background: #1a1a1a;
       border: 1px solid #2a2a2a;
       border-radius: 8px;
       color: #f5f5f5;
-      padding: 14px;
+      padding: 12px;
       font-family: 'IBM Plex Mono', monospace;
-      font-size: 13px;
+      font-size: 12px;
       resize: vertical;
-      line-height: 1.6;
+      line-height: 1.5;
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       box-sizing: border-box;
     }
@@ -618,17 +623,19 @@
     }
 
     #gemini-automator-panel input[type="number"] {
-      width: 72px;
+      width: 60px;
+      min-width: 50px;
       background: #1a1a1a;
       border: 1px solid #2a2a2a;
       border-radius: 6px;
       color: #f5f5f5;
-      padding: 10px 12px;
+      padding: 8px 10px;
       text-align: center;
       font-family: 'IBM Plex Mono', monospace;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 500;
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-sizing: border-box;
     }
 
     #gemini-automator-panel input[type="number"]:focus {
@@ -676,15 +683,18 @@
       border: none;
       border-radius: 6px;
       color: #ffffff;
-      padding: 11px 18px;
+      padding: 10px 14px;
       cursor: pointer;
       font-weight: 600;
-      font-size: 13px;
+      font-size: 12px;
       font-family: 'Manrope', sans-serif;
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
       overflow: hidden;
       letter-spacing: -0.01em;
+      white-space: nowrap;
+      flex: 1;
+      min-width: 0;
     }
 
     #gemini-automator-panel button:hover:not(:disabled) {
@@ -737,31 +747,35 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin: 20px 0;
-      padding: 16px;
+      margin: 12px 0;
+      padding: 12px;
       background: #151515;
       border: 1px solid #2a2a2a;
-      border-radius: 8px;
+      border-radius: 6px;
+      gap: 12px;
+      flex-wrap: wrap;
     }
 
     #gemini-automator-panel .setting-row label {
       margin: 0;
       color: #f5f5f5;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 500;
       text-transform: none;
       letter-spacing: -0.01em;
+      flex: 1;
+      min-width: 100px;
     }
 
     #gemini-automator-panel > div:first-of-type > div:first-child {
-      margin-bottom: 20px;
+      margin-bottom: 12px;
     }
 
     #gemini-automator-panel > div:first-of-type > div:nth-child(4) {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin: 20px 0;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 6px;
+      margin: 12px 0;
     }
 
     #gemini-automator-panel > div:first-of-type > div:nth-child(4) button {
@@ -769,27 +783,29 @@
     }
 
     #gemini-automator-panel .status {
-      padding: 16px;
+      padding: 12px;
       background: #151515;
       border: 1px solid #2a2a2a;
-      border-radius: 8px;
-      font-size: 12px;
-      margin-top: 20px;
+      border-radius: 6px;
+      font-size: 11px;
+      margin-top: 12px;
       font-family: 'IBM Plex Mono', monospace;
+      word-break: break-word;
     }
 
     #gemini-automator-panel .progress {
       font-weight: 600;
       color: #4285f4;
-      margin-bottom: 8px;
-      font-size: 13px;
+      margin-bottom: 6px;
+      font-size: 12px;
       letter-spacing: 0.05em;
     }
 
     #gemini-automator-panel .status > div:last-child {
       color: #a0a0a0;
-      font-size: 11px;
-      line-height: 1.5;
+      font-size: 10px;
+      line-height: 1.4;
+      word-wrap: break-word;
     }
 
     .toggle-panel {

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gemini Automator with Watermark Remover
 // @namespace    https://github.com/gemini-automator
-// @version      1.2.4
+// @version      1.3.0
 // @description  Batch image generation automation + automatic watermark removal for Gemini AI
 // @author       Truong Giang
 // @icon         https://www.google.com/s2/favicons?domain=gemini.google.com
@@ -586,64 +586,114 @@
   // ============================================
 
   GM_addStyle(`
-    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -1000px 0; }
+      100% { background-position: 1000px 0; }
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
 
     #gemini-automator-panel {
       position: fixed;
-      background: #0f0f0f;
-      border: 1px solid #2a2a2a;
-      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(15, 15, 15, 0.98) 0%, rgba(20, 20, 20, 0.98) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
       color: #f5f5f5;
-      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       z-index: 999999;
       padding: 0;
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      backdrop-filter: blur(20px);
-      min-width: 320px;
-      min-height: 400px;
+      backdrop-filter: blur(24px) saturate(180%);
+      box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.05),
+        0 20px 50px rgba(0, 0, 0, 0.6),
+        0 10px 20px rgba(0, 0, 0, 0.4);
+      min-width: 360px;
+      min-height: 440px;
       max-width: 600px;
       max-height: calc(100vh - 40px);
       resize: both;
+      animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     #gemini-automator-panel h2 {
       margin: 0;
-      padding: 16px 20px;
-      font-size: 11px;
+      padding: 20px 24px;
+      font-size: 14px;
       font-weight: 600;
-      color: #f5f5f5;
-      letter-spacing: 0.1em;
-      border-bottom: 1px solid #2a2a2a;
-      background: #151515;
-      font-family: 'IBM Plex Mono', monospace;
-      text-transform: uppercase;
+      color: #ffffff;
+      letter-spacing: -0.02em;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      background: linear-gradient(135deg, rgba(25, 25, 25, 0.6) 0%, rgba(20, 20, 20, 0.6) 100%);
       cursor: move;
       user-select: none;
       flex-shrink: 0;
-      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
       overflow: hidden;
-      text-overflow: ellipsis;
+    }
+
+    #gemini-automator-panel h2::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(66, 133, 244, 0.1) 50%,
+        transparent 100%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    #gemini-automator-panel h2:hover::before {
+      opacity: 1;
     }
 
     #gemini-automator-panel .resize-handle {
       position: absolute;
       bottom: 0;
       right: 0;
-      width: 20px;
-      height: 20px;
+      width: 24px;
+      height: 24px;
       cursor: nwse-resize;
-      background: linear-gradient(135deg, transparent 50%, #2a2a2a 50%);
-      border-bottom-right-radius: 12px;
+      background: linear-gradient(135deg, transparent 50%, rgba(255, 255, 255, 0.08) 50%);
+      border-bottom-right-radius: 16px;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     #gemini-automator-panel .resize-handle:hover {
-      background: linear-gradient(135deg, transparent 50%, #3a3a3a 50%);
+      background: linear-gradient(135deg, transparent 50%, rgba(255, 255, 255, 0.15) 50%);
     }
 
     #gemini-automator-panel > div:first-of-type {
-      padding: 16px;
+      padding: 20px 24px;
       overflow-y: auto;
       overflow-x: hidden;
       flex: 1;
@@ -652,81 +702,97 @@
 
     #gemini-automator-panel label {
       display: block;
-      font-size: 10px;
+      font-size: 13px;
       font-weight: 500;
-      color: #a0a0a0;
-      margin-bottom: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      line-height: 1.3;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+      line-height: 1.4;
     }
 
     #gemini-automator-panel textarea {
       width: 100%;
-      min-height: 80px;
-      max-height: 200px;
-      background: #1a1a1a;
-      border: 1px solid #2a2a2a;
-      border-radius: 8px;
-      color: #f5f5f5;
-      padding: 12px;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 12px;
+      min-height: 100px;
+      max-height: 220px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1.5px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      color: #ffffff;
+      padding: 14px 16px;
+      font-family: 'JetBrains Mono', 'Consolas', monospace;
+      font-size: 13px;
       resize: vertical;
-      line-height: 1.5;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      line-height: 1.6;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       box-sizing: border-box;
+    }
+
+    #gemini-automator-panel textarea:hover {
+      border-color: rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.04);
     }
 
     #gemini-automator-panel textarea:focus {
       outline: none;
-      border-color: #4285f4;
-      background: #1f1f1f;
-      box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1);
+      border-color: rgba(66, 133, 244, 0.6);
+      background: rgba(255, 255, 255, 0.05);
+      box-shadow:
+        0 0 0 3px rgba(66, 133, 244, 0.12),
+        0 4px 12px rgba(0, 0, 0, 0.3);
     }
 
     #gemini-automator-panel textarea::placeholder {
-      color: #555;
-      opacity: 1;
+      color: rgba(255, 255, 255, 0.3);
     }
 
     #gemini-automator-panel input[type="number"] {
-      width: 60px;
-      min-width: 50px;
-      background: #1a1a1a;
-      border: 1px solid #2a2a2a;
-      border-radius: 6px;
-      color: #f5f5f5;
-      padding: 8px 10px;
+      width: 70px;
+      min-width: 60px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1.5px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      color: #ffffff;
+      padding: 10px 12px;
       text-align: center;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 13px;
-      font-weight: 500;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       box-sizing: border-box;
+    }
+
+    #gemini-automator-panel input[type="number"]:hover {
+      border-color: rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.06);
     }
 
     #gemini-automator-panel input[type="number"]:focus {
       outline: none;
-      border-color: #4285f4;
-      background: #1f1f1f;
-      box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1);
+      border-color: rgba(66, 133, 244, 0.6);
+      background: rgba(255, 255, 255, 0.06);
+      box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.12);
     }
 
     #gemini-automator-panel input[type="checkbox"] {
-      width: 40px;
-      height: 22px;
+      width: 44px;
+      height: 24px;
       appearance: none;
-      background: #2a2a2a;
-      border-radius: 11px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
       position: relative;
       cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      border: none;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      border: 1.5px solid rgba(255, 255, 255, 0.08);
+    }
+
+    #gemini-automator-panel input[type="checkbox"]:hover {
+      background: rgba(255, 255, 255, 0.12);
     }
 
     #gemini-automator-panel input[type="checkbox"]:checked {
-      background: #4285f4;
+      background: linear-gradient(135deg, #4285f4 0%, #5294ff 100%);
+      border-color: rgba(66, 133, 244, 0.4);
+      box-shadow: 0 0 0 4px rgba(66, 133, 244, 0.12);
     }
 
     #gemini-automator-panel input[type="checkbox"]::before {
@@ -735,115 +801,154 @@
       width: 18px;
       height: 18px;
       border-radius: 50%;
-      background: #f5f5f5;
+      background: #ffffff;
       top: 2px;
       left: 2px;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     }
 
     #gemini-automator-panel input[type="checkbox"]:checked::before {
-      left: 20px;
+      left: 22px;
     }
 
     #gemini-automator-panel button {
-      background: #4285f4;
+      background: linear-gradient(135deg, #4285f4 0%, #5294ff 100%);
       border: none;
-      border-radius: 6px;
+      border-radius: 10px;
       color: #ffffff;
-      padding: 10px 14px;
+      padding: 12px 18px;
       cursor: pointer;
       font-weight: 600;
-      font-size: 12px;
-      font-family: 'Manrope', sans-serif;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      font-size: 13px;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
       overflow: hidden;
-      letter-spacing: -0.01em;
+      letter-spacing: -0.02em;
       white-space: nowrap;
       flex: 1;
       min-width: 0;
+      box-shadow:
+        0 2px 8px rgba(66, 133, 244, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    #gemini-automator-panel button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
+      opacity: 0;
+      transition: opacity 0.25s;
     }
 
     #gemini-automator-panel button:hover:not(:disabled) {
-      background: #5294f5;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(66, 133, 244, 0.3);
+      transform: translateY(-2px);
+      box-shadow:
+        0 6px 20px rgba(66, 133, 244, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+
+    #gemini-automator-panel button:hover:not(:disabled)::before {
+      opacity: 1;
     }
 
     #gemini-automator-panel button:active:not(:disabled) {
-      transform: translateY(0);
-      box-shadow: 0 2px 4px rgba(66, 133, 244, 0.2);
+      transform: translateY(-1px);
+      box-shadow:
+        0 3px 12px rgba(66, 133, 244, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
     }
 
     #gemini-automator-panel button:disabled {
-      background: #2a2a2a;
-      color: #666;
+      background: rgba(255, 255, 255, 0.05);
+      color: rgba(255, 255, 255, 0.3);
       cursor: not-allowed;
       transform: none;
-    }
-
-    #gemini-automator-panel button#ga-setup {
-      background: #1a1a1a;
-      border: 1px solid #2a2a2a;
-      color: #f5f5f5;
-    }
-
-    #gemini-automator-panel button#ga-setup:hover:not(:disabled) {
-      background: #242424;
-      border-color: #3a3a3a;
       box-shadow: none;
     }
 
+    #gemini-automator-panel button#ga-setup {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1.5px solid rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      box-shadow: none;
+    }
+
+    #gemini-automator-panel button#ga-setup:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
     #gemini-automator-panel button#ga-pause {
-      background: #f59e0b;
+      background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+      box-shadow:
+        0 2px 8px rgba(245, 158, 11, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
     }
 
     #gemini-automator-panel button#ga-pause:hover:not(:disabled) {
-      background: #fbbf24;
+      box-shadow:
+        0 6px 20px rgba(245, 158, 11, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
     }
 
     #gemini-automator-panel button#ga-stop {
-      background: #ef4444;
+      background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+      box-shadow:
+        0 2px 8px rgba(239, 68, 68, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
     }
 
     #gemini-automator-panel button#ga-stop:hover:not(:disabled) {
-      background: #f87171;
+      box-shadow:
+        0 6px 20px rgba(239, 68, 68, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
     }
 
     #gemini-automator-panel .setting-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin: 12px 0;
-      padding: 12px;
-      background: #151515;
-      border: 1px solid #2a2a2a;
-      border-radius: 6px;
-      gap: 12px;
+      margin: 14px 0;
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1.5px solid rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      gap: 16px;
       flex-wrap: wrap;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    #gemini-automator-panel .setting-row:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.1);
     }
 
     #gemini-automator-panel .setting-row label {
       margin: 0;
-      color: #f5f5f5;
-      font-size: 12px;
+      color: #ffffff;
+      font-size: 13px;
       font-weight: 500;
-      text-transform: none;
       letter-spacing: -0.01em;
       flex: 1;
-      min-width: 100px;
+      min-width: 120px;
     }
 
     #gemini-automator-panel > div:first-of-type > div:first-child {
-      margin-bottom: 12px;
+      margin-bottom: 18px;
     }
 
     #gemini-automator-panel > div:first-of-type > div:nth-child(4) {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: 6px;
-      margin: 12px 0;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 10px;
+      margin: 18px 0;
     }
 
     #gemini-automator-panel > div:first-of-type > div:nth-child(4) button {
@@ -851,78 +956,138 @@
     }
 
     #gemini-automator-panel .status {
-      padding: 12px;
-      background: #151515;
-      border: 1px solid #2a2a2a;
-      border-radius: 6px;
-      font-size: 11px;
-      margin-top: 12px;
-      font-family: 'IBM Plex Mono', monospace;
+      padding: 16px 18px;
+      background: rgba(66, 133, 244, 0.08);
+      border: 1.5px solid rgba(66, 133, 244, 0.2);
+      border-radius: 10px;
+      margin-top: 16px;
+      font-family: 'JetBrains Mono', monospace;
       word-break: break-word;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #gemini-automator-panel .status::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3px;
+      height: 100%;
+      background: linear-gradient(180deg, #4285f4 0%, #5294ff 100%);
     }
 
     #gemini-automator-panel .progress {
       font-weight: 600;
-      color: #4285f4;
-      margin-bottom: 6px;
-      font-size: 12px;
-      letter-spacing: 0.05em;
+      color: #ffffff;
+      margin-bottom: 8px;
+      font-size: 14px;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #gemini-automator-panel .progress::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #4285f4;
+      box-shadow: 0 0 12px rgba(66, 133, 244, 0.8);
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     }
 
     #gemini-automator-panel .status > div:last-child {
-      color: #a0a0a0;
-      font-size: 10px;
-      line-height: 1.4;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 12px;
+      line-height: 1.5;
       word-wrap: break-word;
     }
 
     .toggle-panel {
       position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #000000;
-      border: 1px solid #2a2a2a;
+      bottom: 24px;
+      right: 24px;
+      background: linear-gradient(135deg, #4285f4 0%, #5294ff 100%);
+      border: 2px solid rgba(255, 255, 255, 0.2);
       border-radius: 50%;
-      width: 52px;
-      height: 52px;
+      width: 58px;
+      height: 58px;
       cursor: pointer;
       z-index: 999999;
       color: white;
-      font-size: 24px;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      font-size: 26px;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+      box-shadow:
+        0 8px 24px rgba(66, 133, 244, 0.4),
+        0 4px 12px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .toggle-panel::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 50%;
+      padding: 2px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), transparent);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity 0.3s;
     }
 
     .toggle-panel:hover {
-      background: #1a1a1a;
-      border-color: #3a3a3a;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
+      transform: translateY(-4px) scale(1.05);
+      box-shadow:
+        0 12px 32px rgba(66, 133, 244, 0.5),
+        0 6px 16px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+
+    .toggle-panel:hover::before {
+      opacity: 1;
     }
 
     .toggle-panel:active {
-      transform: translateY(0);
+      transform: translateY(-2px) scale(1.02);
+      box-shadow:
+        0 8px 20px rgba(66, 133, 244, 0.45),
+        0 4px 12px rgba(0, 0, 0, 0.35);
     }
 
     /* Scrollbar styling */
     #gemini-automator-panel > div:first-of-type::-webkit-scrollbar {
-      width: 8px;
+      width: 10px;
     }
 
     #gemini-automator-panel > div:first-of-type::-webkit-scrollbar-track {
       background: transparent;
+      margin: 4px;
     }
 
     #gemini-automator-panel > div:first-of-type::-webkit-scrollbar-thumb {
-      background: #2a2a2a;
-      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 5px;
+      border: 2px solid transparent;
+      background-clip: padding-box;
+      transition: background 0.25s;
     }
 
     #gemini-automator-panel > div:first-of-type::-webkit-scrollbar-thumb:hover {
-      background: #3a3a3a;
+      background: rgba(255, 255, 255, 0.2);
+      background-clip: padding-box;
+    }
+
+    #gemini-automator-panel > div:first-of-type::-webkit-scrollbar-thumb:active {
+      background: rgba(255, 255, 255, 0.25);
+      background-clip: padding-box;
     }
   `);
 
@@ -955,7 +1120,7 @@
 
     // Title
     const title = document.createElement('h2');
-    title.textContent = '✨ Gemini Automator';
+    title.innerHTML = '<span style="font-size: 18px; margin-right: 6px;">⚡</span> Gemini Automator';
     title.className = 'panel-header';
     panel.appendChild(title);
 
@@ -970,7 +1135,7 @@
     promptsLabel.textContent = 'Prompts (one per line):';
     const promptsTextarea = document.createElement('textarea');
     promptsTextarea.id = 'ga-prompts';
-    promptsTextarea.placeholder = 'A serene mountain landscape\nA futuristic cityscape\nAbstract geometric patterns';
+    promptsTextarea.placeholder = 'Enter your prompts here, one per line...\n\nExample:\nA serene mountain landscape at sunset\nA futuristic cyberpunk cityscape\nAbstract geometric patterns with vibrant colors';
     promptsDiv.appendChild(promptsLabel);
     promptsDiv.appendChild(promptsTextarea);
     panel.appendChild(promptsDiv);

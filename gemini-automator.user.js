@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gemini Automator with Watermark Remover
 // @namespace    https://github.com/gemini-automator
-// @version      1.2.3
+// @version      1.2.4
 // @description  Batch image generation automation + automatic watermark removal for Gemini AI
 // @author       Truong Giang
 // @icon         https://www.google.com/s2/favicons?domain=gemini.google.com
@@ -12,6 +12,7 @@
 // @connect      googleusercontent.com
 // @grant        GM_xmlhttpRequest
 // @grant        GM_addStyle
+// @grant        unsafeWindow
 // @run-at       document-end
 // ==/UserScript==
 
@@ -426,6 +427,8 @@
     const originalSrc = imgElement.src;
 
     try {
+      // Store original src for later reprocessing if needed
+      imgElement.dataset.originalSrc = originalSrc;
       imgElement.src = '';
       const normalSizeBlob = await fetchBlob(replaceWithNormalSize(originalSrc));
       const normalSizeBlobUrl = URL.createObjectURL(normalSizeBlob);
@@ -530,31 +533,30 @@
 
   /**
    * Pattern matches Gemini image URLs including downloads
-   * Matches: https://lh3.googleusercontent.com/rd-gg[-dl]/...=s[any size]
+   * Excludes =s0-d? but includes =s0-d-I?alr=yes and other variants
    */
-  const GEMINI_URL_PATTERN = /^https:\/\/lh3\.googleusercontent\.com\/rd-gg(-dl)?\/.*=s\d+/;
+  const GEMINI_URL_PATTERN = /^https:\/\/lh3\.googleusercontent\.com\/rd-gg(?:-dl)?\/.+=s(?!0-d\?).*/;
 
   /**
    * Intercept fetch to process downloads
    */
-  const originalFetch = window.fetch;
-  window.fetch = async function(...args) {
+  const { fetch: origFetch } = unsafeWindow;
+  unsafeWindow.fetch = async (...args) => {
     const url = typeof args[0] === 'string' ? args[0] : args[0]?.url;
 
-    // Check if this is a Gemini image URL
-    if (url && GEMINI_URL_PATTERN.test(url)) {
-      console.log('[Gemini Automator] Intercepting fetch:', url);
+    if (GEMINI_URL_PATTERN.test(url)) {
+      console.log('[Gemini Automator] Intercepting:', url);
 
       // Replace size parameter to get full resolution
-      const fullSizeUrl = replaceWithNormalSize(url);
+      const origUrl = replaceWithNormalSize(url);
       if (typeof args[0] === 'string') {
-        args[0] = fullSizeUrl;
+        args[0] = origUrl;
       } else if (args[0]?.url) {
-        args[0].url = fullSizeUrl;
+        args[0].url = origUrl;
       }
 
       // Fetch original image
-      const response = await originalFetch(...args);
+      const response = await origFetch(...args);
 
       // If watermark removal is disabled or engine not ready, return original
       if (!state.removeWatermark || !engine || !response.ok) {
@@ -563,25 +565,20 @@
 
       try {
         // Process the image blob
-        const originalBlob = await response.blob();
-        const processedBlob = await processImageBlob(originalBlob);
+        const processedBlob = await processImageBlob(await response.blob());
 
-        console.log('[Gemini Automator] Fetch processed successfully');
-
-        // Return new response with processed blob
         return new Response(processedBlob, {
           status: response.status,
           statusText: response.statusText,
           headers: response.headers
         });
       } catch (error) {
-        console.warn('[Gemini Automator] Fetch processing failed:', error);
+        console.warn('[Gemini Automator] Processing failed:', error);
         return response;
       }
     }
 
-    // Not a Gemini image, pass through
-    return originalFetch(...args);
+    return origFetch(...args);
   };
 
   // ============================================

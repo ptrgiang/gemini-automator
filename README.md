@@ -66,7 +66,7 @@ The script is configured to automatically check for updates from GitHub.
 **Manual update check:**
 1. Click the Tampermonkey icon
 2. Click the **Dashboard** button
-3. Find "Gemini Automator with Watermark Remover"
+3. Find "Gemini Automator"
 4. Click the **"Last updated"** timestamp
 5. Click **"Check for updates"**
 

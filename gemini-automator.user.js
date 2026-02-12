@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gemini Automator with Watermark Remover
 // @namespace    https://github.com/gemini-automator
-// @version      1.0.3
+// @version      1.0.4
 // @description  Batch image generation automation + automatic watermark removal for Gemini AI
 // @author       Truong Giang
 // @icon         https://www.google.com/s2/favicons?domain=gemini.google.com
@@ -416,6 +416,8 @@
       .filter(isValidGeminiImage);
 
   async function processImage(imgElement) {
+    // Skip if watermark removal is disabled
+    if (!state.removeWatermark) return;
     if (!engine || processingQueue.has(imgElement)) return;
     if (imgElement.dataset.watermarkProcessed === 'true') return;
 
@@ -444,6 +446,8 @@
   }
 
   const processAllImages = () => {
+    // Skip if watermark removal is disabled
+    if (!state.removeWatermark) return;
     const images = findGeminiImages();
     if (images.length === 0) return;
     console.log(`[Gemini Automator] Found ${images.length} images to process`);

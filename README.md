@@ -1,33 +1,33 @@
 # Gemini Automator
 
-🚀 **Batch image generation automation + automatic watermark removal for Google Gemini AI**
+**Batch image generation automation + automatic watermark removal for Google Gemini AI**
 
 A powerful userscript that automates batch prompt processing and removes NanoBanana watermarks from generated images.
 
 ---
 
-## ✨ Features
+## Features
 
-### 🎨 Batch Image Generation
+### Batch Image Generation
 - **Process multiple prompts automatically** - Enter prompts, click start
 - **Smart delays** - Configurable random delays between generations
 - **Full control** - Pause, resume, or stop anytime
 - **Progress tracking** - Real-time status updates
 
-### 🖼️ Automatic Watermark Removal
+### Automatic Watermark Removal
 - **Removes NanoBanana watermarks** - Clean, professional images
 - **Auto-detection** - Handles both 48px and 96px watermarks
 - **Real-time processing** - Works as images generate
 - **No quality loss** - Advanced alpha map algorithm
 
-### ⚙️ Auto-Configuration
+### Auto-Configuration
 - **One-click setup** - Automatically selects "Create image" tool
 - **Model selection** - Auto-selects Pro model
 - **No manual configuration** - Just click and go
 
 ---
 
-## 📦 Installation
+## Installation
 
 ### Step 1: Install a Userscript Manager
 
@@ -39,7 +39,7 @@ Choose one (Tampermonkey recommended):
 
 ### Step 2: Install the Script
 
-**✅ Watermark data is already included!** The script is ready to use.
+**Watermark data is already included!** The script is ready to use.
 
 **Option A: Direct Install from GitHub (Recommended)**
 1. Click this link: [Install gemini-automator.user.js](https://github.com/ptrgiang/gemini-automator/raw/main/gemini-automator.user.js)
@@ -54,7 +54,7 @@ Choose one (Tampermonkey recommended):
 
 **Note:** The watermark removal data is loaded automatically from `watermark-data.js` hosted on GitHub.
 
-### 🔄 Automatic Updates
+### Automatic Updates
 
 The script is configured to automatically check for updates from GitHub.
 
@@ -78,13 +78,13 @@ The script is configured to automatically check for updates from GitHub.
 
 ---
 
-## 🎯 Usage
+## Usage
 
 ### Quick Start
 
 1. **Navigate to Gemini**: https://gemini.google.com
-2. **Find the toggle**: Look for the **⚡** button (top-right corner)
-3. **Open panel**: Click the **⚡** button
+2. **Find the toggle**: Look for the toggle button (top-right corner)
+3. **Open panel**: Click the toggle button
 4. **Setup**: Click **"Setup Gemini"** button
 5. **Add prompts**: Enter one prompt per line
 6. **Configure delays**: Set min/max delay (default: 10-20 seconds)
@@ -94,7 +94,7 @@ The script is configured to automatically check for updates from GitHub.
 
 ```
 ┌─────────────────────────────┐
-│ ✨ Gemini Automator         │
+│ Gemini Automator            │
 ├─────────────────────────────┤
 │ Prompts (one per line):     │
 │ ┌─────────────────────────┐ │
@@ -105,7 +105,7 @@ The script is configured to automatically check for updates from GitHub.
 │                             │
 │ Min Delay (sec): [10]       │
 │ Max Delay (sec): [20]       │
-│ Remove Watermarks: ☑        │
+│ Remove Watermarks: [X]      │
 │                             │
 │ [Setup] [Start] [Pause] [Stop] │
 │                             │
@@ -122,7 +122,7 @@ The script is configured to automatically check for updates from GitHub.
 | **Start** | Begin batch processing |
 | **Pause/Resume** | Pause or resume automation |
 | **Stop** | Stop completely |
-| **⚡ Toggle** | Show/hide control panel |
+| **Toggle** | Show/hide control panel |
 
 ### Settings
 
@@ -131,11 +131,11 @@ The script is configured to automatically check for updates from GitHub.
 | **Prompts** | One prompt per line | - |
 | **Min Delay** | Minimum seconds between prompts | 10 |
 | **Max Delay** | Maximum seconds between prompts | 20 |
-| **Remove Watermarks** | Automatically remove watermarks | ✓ |
+| **Remove Watermarks** | Automatically remove watermarks | Enabled |
 
 ---
 
-## 🔧 How It Works
+## How It Works
 
 ### Automation Flow
 
@@ -156,23 +156,23 @@ Setup → Fill Prompt → Generate → Wait for Completion → Remove Watermark 
 
 | Feature | Userscript | Extension |
 |---------|-----------|-----------|
-| **CORS Bypass** | ✅ `GM_xmlhttpRequest` | ❌ Limited |
-| **Fetch Interception** | ✅ Full access | ❌ Restricted |
-| **Authenticated Requests** | ✅ Works perfectly | ❌ Issues |
-| **Installation** | ✅ One-click | ⚠️ Developer mode |
-| **Auto-updates** | ✅ Automatic | ❌ Manual reload |
+| **CORS Bypass** | Yes - `GM_xmlhttpRequest` | No - Limited |
+| **Fetch Interception** | Yes - Full access | No - Restricted |
+| **Authenticated Requests** | Yes - Works perfectly | No - Issues |
+| **Installation** | Yes - One-click | Requires developer mode |
+| **Auto-updates** | Yes - Automatic | No - Manual reload |
 
 ---
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### UI Not Appearing
 
-**Problem:** Can't see the ⚡ button
+**Problem:** Can't see the toggle button
 
 **Solutions:**
 1. Open console (F12) and check for: `[Gemini Automator] UI created`
-2. Look for the ⚡ button in top-right corner (might be hidden)
+2. Look for the toggle button in top-right corner (might be hidden)
 3. Verify script is enabled in Tampermonkey
 4. Hard refresh page (Ctrl+Shift+R)
 5. Check console for errors
@@ -211,17 +211,17 @@ Setup → Fill Prompt → Generate → Wait for Completion → Remove Watermark 
 
 ---
 
-## 📊 Console Messages
+## Console Messages
 
 Monitor progress in browser console (F12):
 
 ```bash
 [Gemini Automator] Initializing...
 [Gemini Automator] DOM ready
-[Gemini Automator] UI created - Look for ⚡ button in top-right corner!
-[Gemini Automator] ⚡ Toggle button added to page
+[Gemini Automator] UI created - Look for toggle button in top-right corner!
+[Gemini Automator] Toggle button added to page
 [Gemini Automator] Watermark removal ready
-[Gemini Automator] Ready! Click the ⚡ button to open the panel.
+[Gemini Automator] Ready! Click the toggle button to open the panel.
 
 # During use:
 [Gemini Automator] Setting up Gemini...
@@ -232,7 +232,7 @@ Monitor progress in browser console (F12):
 
 ---
 
-## 🎨 Customization
+## Customization
 
 ### Change UI Position
 
@@ -272,7 +272,7 @@ const state = {
 
 ---
 
-## 🔐 Permissions
+## Permissions
 
 ```javascript
 // @grant        GM_xmlhttpRequest  // Bypass CORS for image fetching
@@ -285,13 +285,13 @@ These permissions allow:
 
 ---
 
-## 📝 License
+## License
 
 MIT License - Free to use and modify!
 
 ---
 
-## 🙏 Credits
+## Credits
 
 - **Watermark Removal**: Advanced alpha map algorithm
 - **UI Design**: Material Design 3 (Google)
@@ -299,7 +299,7 @@ MIT License - Free to use and modify!
 
 ---
 
-## 🆘 Support
+## Support
 
 **Having issues?**
 
@@ -310,4 +310,4 @@ MIT License - Free to use and modify!
 
 ---
 
-**Made with ⚡ for Gemini power users**
+**Made for Gemini power users**

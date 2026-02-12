@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gemini Automator with Watermark Remover
 // @namespace    https://github.com/gemini-automator
-// @version      1.1.2
+// @version      1.2.0
 // @description  Batch image generation automation + automatic watermark removal for Gemini AI
 // @author       Truong Giang
 // @icon         https://www.google.com/s2/favicons?domain=gemini.google.com
@@ -463,9 +463,6 @@
 
     #gemini-automator-panel {
       position: fixed;
-      bottom: 80px;
-      right: 20px;
-      width: 360px;
       background: #0f0f0f;
       border: 1px solid #2a2a2a;
       border-radius: 12px;
@@ -473,11 +470,15 @@
       font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
       z-index: 999999;
       padding: 0;
-      max-height: calc(100vh - 120px);
       overflow: hidden;
       display: flex;
       flex-direction: column;
       backdrop-filter: blur(20px);
+      min-width: 320px;
+      min-height: 400px;
+      max-width: 600px;
+      max-height: calc(100vh - 40px);
+      resize: both;
     }
 
     #gemini-automator-panel h2 {
@@ -493,6 +494,23 @@
       text-transform: uppercase;
       font-size: 11px;
       letter-spacing: 0.1em;
+      cursor: move;
+      user-select: none;
+    }
+
+    #gemini-automator-panel .resize-handle {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 20px;
+      height: 20px;
+      cursor: nwse-resize;
+      background: linear-gradient(135deg, transparent 50%, #2a2a2a 50%);
+      border-bottom-right-radius: 12px;
+    }
+
+    #gemini-automator-panel .resize-handle:hover {
+      background: linear-gradient(135deg, transparent 50%, #3a3a3a 50%);
     }
 
     #gemini-automator-panel > div:first-of-type {
@@ -795,7 +813,13 @@
     // Title
     const title = document.createElement('h2');
     title.textContent = '✨ Gemini Automator';
+    title.className = 'panel-header';
     panel.appendChild(title);
+
+    // Resize handle
+    const resizeHandle = document.createElement('div');
+    resizeHandle.className = 'resize-handle';
+    panel.appendChild(resizeHandle);
 
     // Prompts section
     const promptsDiv = document.createElement('div');
@@ -923,6 +947,144 @@
       console.log('[Gemini Automator] Watermark removal preference saved. Reloading page...');
       setTimeout(() => location.reload(), 500);
     };
+
+    // Load saved panel position and size
+    loadPanelState(panel);
+
+    // Make panel draggable
+    makeDraggable(panel, title);
+
+    // Make panel resizable
+    makeResizable(panel, resizeHandle);
+  }
+
+  /**
+   * Load panel position and size from localStorage
+   */
+  function loadPanelState(panel) {
+    const savedState = localStorage.getItem('gemini-automator-panel-state');
+    if (savedState) {
+      try {
+        const state = JSON.parse(savedState);
+        panel.style.left = state.left || 'auto';
+        panel.style.top = state.top || 'auto';
+        panel.style.right = state.right || '20px';
+        panel.style.bottom = state.bottom || '80px';
+        panel.style.width = state.width || '360px';
+        panel.style.height = state.height || 'auto';
+      } catch (e) {
+        // Use defaults if parse fails
+        panel.style.right = '20px';
+        panel.style.bottom = '80px';
+        panel.style.width = '360px';
+      }
+    } else {
+      // Default position
+      panel.style.right = '20px';
+      panel.style.bottom = '80px';
+      panel.style.width = '360px';
+    }
+  }
+
+  /**
+   * Save panel position and size to localStorage
+   */
+  function savePanelState(panel) {
+    const state = {
+      left: panel.style.left,
+      top: panel.style.top,
+      right: panel.style.right,
+      bottom: panel.style.bottom,
+      width: panel.style.width,
+      height: panel.style.height
+    };
+    localStorage.setItem('gemini-automator-panel-state', JSON.stringify(state));
+  }
+
+  /**
+   * Make panel draggable by header
+   */
+  function makeDraggable(panel, handle) {
+    let isDragging = false;
+    let startX, startY, startLeft, startTop;
+
+    handle.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      startX = e.clientX;
+      startY = e.clientY;
+
+      const rect = panel.getBoundingClientRect();
+      startLeft = rect.left;
+      startTop = rect.top;
+
+      // Clear bottom/right positioning when dragging starts
+      panel.style.bottom = 'auto';
+      panel.style.right = 'auto';
+
+      document.body.style.cursor = 'move';
+      e.preventDefault();
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+
+      const deltaX = e.clientX - startX;
+      const deltaY = e.clientY - startY;
+
+      panel.style.left = (startLeft + deltaX) + 'px';
+      panel.style.top = (startTop + deltaY) + 'px';
+    });
+
+    document.addEventListener('mouseup', () => {
+      if (isDragging) {
+        isDragging = false;
+        document.body.style.cursor = '';
+        savePanelState(panel);
+      }
+    });
+  }
+
+  /**
+   * Make panel resizable
+   */
+  function makeResizable(panel, handle) {
+    let isResizing = false;
+    let startX, startY, startWidth, startHeight;
+
+    handle.addEventListener('mousedown', (e) => {
+      isResizing = true;
+      startX = e.clientX;
+      startY = e.clientY;
+
+      const rect = panel.getBoundingClientRect();
+      startWidth = rect.width;
+      startHeight = rect.height;
+
+      document.body.style.cursor = 'nwse-resize';
+      e.preventDefault();
+      e.stopPropagation();
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (!isResizing) return;
+
+      const deltaX = e.clientX - startX;
+      const deltaY = e.clientY - startY;
+
+      const newWidth = Math.max(320, Math.min(600, startWidth + deltaX));
+      const newHeight = Math.max(400, Math.min(window.innerHeight - 40, startHeight + deltaY));
+
+      panel.style.width = newWidth + 'px';
+      panel.style.height = newHeight + 'px';
+    });
+
+    document.addEventListener('mouseup', () => {
+      if (isResizing) {
+        isResizing = false;
+        document.body.style.cursor = '';
+        savePanelState(panel);
+      }
+    });
   }
 
   function updateStatus(message) {

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gemini Automator
 // @namespace    https://github.com/ptrgiang/gemini-automator
-// @version      1.3.6
+// @version      1.3.7
 // @description  Batch image generation automation with automatic watermark removal for Gemini AI
 // @author       Truong Giang
 // @icon         https://www.google.com/s2/favicons?domain=gemini.google.com
@@ -747,13 +747,11 @@
     }
 
     #gemini-automator-panel input[type="number"] {
-      width: 70px;
-      min-width: 60px;
       background: rgba(255, 255, 255, 0.04);
       border: 1.5px solid rgba(255, 255, 255, 0.08);
       border-radius: 8px;
       color: #ffffff;
-      padding: 10px 12px;
+      padding: 10px 8px;
       text-align: center;
       font-family: 'JetBrains Mono', monospace;
       font-size: 14px;
@@ -1169,37 +1167,59 @@
     // Delay Settings (Min and Max in one row)
     const delayDiv = document.createElement('div');
     delayDiv.className = 'setting-row';
-    delayDiv.style.display = 'grid';
-    delayDiv.style.gridTemplateColumns = 'auto 60px auto 60px';
-    delayDiv.style.gap = '10px';
+    delayDiv.style.display = 'flex';
+    delayDiv.style.gap = '12px';
     delayDiv.style.alignItems = 'center';
+    delayDiv.style.justifyContent = 'space-between';
+
+    const minContainer = document.createElement('div');
+    minContainer.style.display = 'flex';
+    minContainer.style.alignItems = 'center';
+    minContainer.style.gap = '8px';
+    minContainer.style.flex = '1';
 
     const minDelayLabel = document.createElement('label');
     minDelayLabel.textContent = 'Min:';
     minDelayLabel.style.margin = '0';
     minDelayLabel.style.fontSize = '13px';
+    minDelayLabel.style.whiteSpace = 'nowrap';
     const minDelayInput = document.createElement('input');
     minDelayInput.type = 'number';
     minDelayInput.id = 'ga-min-delay';
     minDelayInput.value = '10';
     minDelayInput.min = '5';
     minDelayInput.max = '60';
+    minDelayInput.style.width = '55px';
+    minDelayInput.style.minWidth = '55px';
+
+    minContainer.appendChild(minDelayLabel);
+    minContainer.appendChild(minDelayInput);
+
+    const maxContainer = document.createElement('div');
+    maxContainer.style.display = 'flex';
+    maxContainer.style.alignItems = 'center';
+    maxContainer.style.gap = '8px';
+    maxContainer.style.flex = '1';
 
     const maxDelayLabel = document.createElement('label');
     maxDelayLabel.textContent = 'Max:';
     maxDelayLabel.style.margin = '0';
     maxDelayLabel.style.fontSize = '13px';
+    maxDelayLabel.style.whiteSpace = 'nowrap';
     const maxDelayInput = document.createElement('input');
     maxDelayInput.type = 'number';
     maxDelayInput.id = 'ga-max-delay';
     maxDelayInput.value = '20';
     maxDelayInput.min = '10';
     maxDelayInput.max = '120';
+    maxDelayInput.style.width = '55px';
+    maxDelayInput.style.minWidth = '55px';
 
-    delayDiv.appendChild(minDelayLabel);
-    delayDiv.appendChild(minDelayInput);
-    delayDiv.appendChild(maxDelayLabel);
-    delayDiv.appendChild(maxDelayInput);
+    maxContainer.appendChild(maxDelayLabel);
+    maxContainer.appendChild(maxDelayInput);
+
+    delayDiv.appendChild(minContainer);
+    delayDiv.appendChild(maxContainer);
     panel.appendChild(delayDiv);
 
     // Remove Watermarks

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gemini Automator
 // @namespace    https://github.com/ptrgiang/gemini-automator
-// @version      2.0.0
+// @version      2.0.1
 // @description  Batch image generation automation with automatic watermark removal for Gemini AI
 // @author       Truong Giang
 // @icon         https://www.google.com/s2/favicons?domain=gemini.google.com
@@ -643,17 +643,30 @@
 
     #gemini-automator-panel .resize-handle {
       position: absolute;
-      bottom: 0;
-      right: 0;
-      width: 28px;
-      height: 28px;
+      bottom: 8px;
+      right: 8px;
+      width: 20px;
+      height: 20px;
       cursor: nwse-resize;
-      background: linear-gradient(135deg, transparent 50%, rgba(255, 255, 255, 0.06) 50%);
-      border-bottom-right-radius: 24px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      z-index: 10;
+      transition: all 0.2s ease;
+    }
+
+    #gemini-automator-panel .resize-handle::before {
+      content: '⋮⋮';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-45deg);
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.3);
+      letter-spacing: -2px;
     }
 
     #gemini-automator-panel .resize-handle:hover {
-      background: linear-gradient(135deg, transparent 50%, rgba(255, 255, 255, 0.12) 50%);
+      background: rgba(255, 255, 255, 0.15);
     }
 
     #gemini-automator-panel > div:first-of-type {
@@ -1027,9 +1040,10 @@
     minContainer.style.flex = '1';
 
     const minDelayLabel = document.createElement('label');
-    minDelayLabel.textContent = 'Min:';
+    minDelayLabel.textContent = 'Min Delay:';
     minDelayLabel.style.margin = '0';
-    minDelayLabel.style.fontSize = '13px';
+    minDelayLabel.style.fontSize = '14px';
+    minDelayLabel.style.fontWeight = '500';
     minDelayLabel.style.whiteSpace = 'nowrap';
     const minDelayInput = document.createElement('input');
     minDelayInput.type = 'number';
@@ -1050,9 +1064,10 @@
     maxContainer.style.flex = '1';
 
     const maxDelayLabel = document.createElement('label');
-    maxDelayLabel.textContent = 'Max:';
+    maxDelayLabel.textContent = 'Max Delay:';
     maxDelayLabel.style.margin = '0';
-    maxDelayLabel.style.fontSize = '13px';
+    maxDelayLabel.style.fontSize = '14px';
+    maxDelayLabel.style.fontWeight = '500';
     maxDelayLabel.style.whiteSpace = 'nowrap';
     const maxDelayInput = document.createElement('input');
     maxDelayInput.type = 'number';

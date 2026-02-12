@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gemini Automator with Watermark Remover
 // @namespace    https://github.com/gemini-automator
-// @version      1.0.2
+// @version      1.0.3
 // @description  Batch image generation automation + automatic watermark removal for Gemini AI
 // @author       Truong Giang
 // @icon         https://www.google.com/s2/favicons?domain=gemini.google.com
@@ -316,13 +316,24 @@
     const textarea = document.querySelector(SELECTORS.promptTextarea);
     if (!textarea) throw new Error('Prompt textarea not found');
 
-    textarea.innerHTML = '';
+    // Clear existing content safely (Trusted Types compliant)
+    while (textarea.firstChild) {
+      textarea.removeChild(textarea.firstChild);
+    }
+
     textarea.focus();
-    textarea.textContent = prompt;
+
+    // Create paragraph element with text node (Trusted Types compliant)
+    const p = document.createElement('p');
+    const textNode = document.createTextNode(prompt);
+    p.appendChild(textNode);
+    textarea.appendChild(p);
+
+    // Trigger events
     textarea.dispatchEvent(new Event('input', { bubbles: true }));
     textarea.dispatchEvent(new Event('change', { bubbles: true }));
-    textarea.innerHTML = `<p>${prompt}</p>`;
     textarea.classList.remove('ql-blank');
+
     await sleep(500);
   }
 

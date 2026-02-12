@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gemini Automator
 // @namespace    https://github.com/ptrgiang/gemini-automator
-// @version      1.3.8
+// @version      2.0.0
 // @description  Batch image generation automation with automatic watermark removal for Gemini AI
 // @author       Truong Giang
 // @icon         https://www.google.com/s2/favicons?domain=gemini.google.com
@@ -586,7 +586,7 @@
   // ============================================
 
   GM_addStyle(`
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
     @keyframes slideIn {
       from {
@@ -604,34 +604,23 @@
       50% { opacity: 0.5; }
     }
 
-    @keyframes shimmer {
-      0% { background-position: -1000px 0; }
-      100% { background-position: 1000px 0; }
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
     #gemini-automator-panel {
       position: fixed;
-      background: linear-gradient(135deg, rgba(15, 15, 15, 0.98) 0%, rgba(20, 20, 20, 0.98) 100%);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 16px;
-      color: #f5f5f5;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0A0A0A;
+      border: none;
+      border-radius: 24px;
+      color: #FFFFFF;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
       z-index: 999999;
       padding: 0;
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      backdrop-filter: blur(24px) saturate(180%);
       box-shadow:
-        0 0 0 1px rgba(0, 0, 0, 0.05),
-        0 20px 50px rgba(0, 0, 0, 0.6),
-        0 10px 20px rgba(0, 0, 0, 0.4);
-      min-width: 360px;
-      min-height: 440px;
+        0 20px 60px rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(255, 255, 255, 0.05);
+      min-width: 380px;
+      min-height: 480px;
       max-width: 600px;
       max-height: calc(100vh - 40px);
       resize: both;
@@ -640,172 +629,126 @@
 
     #gemini-automator-panel h2 {
       margin: 0;
-      padding: 20px 24px;
-      font-size: 14px;
-      font-weight: 600;
-      color: #ffffff;
-      letter-spacing: -0.02em;
+      padding: 24px 28px;
+      font-size: 20px;
+      font-weight: 700;
+      color: #FFFFFF;
+      letter-spacing: -0.03em;
       border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-      background: linear-gradient(135deg, rgba(25, 25, 25, 0.6) 0%, rgba(20, 20, 20, 0.6) 100%);
+      background: #000000;
       cursor: move;
       user-select: none;
       flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    #gemini-automator-panel h2::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg,
-        transparent 0%,
-        rgba(66, 133, 244, 0.1) 50%,
-        transparent 100%);
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-
-    #gemini-automator-panel h2:hover::before {
-      opacity: 1;
     }
 
     #gemini-automator-panel .resize-handle {
       position: absolute;
       bottom: 0;
       right: 0;
-      width: 24px;
-      height: 24px;
+      width: 28px;
+      height: 28px;
       cursor: nwse-resize;
-      background: linear-gradient(135deg, transparent 50%, rgba(255, 255, 255, 0.08) 50%);
-      border-bottom-right-radius: 16px;
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      background: linear-gradient(135deg, transparent 50%, rgba(255, 255, 255, 0.06) 50%);
+      border-bottom-right-radius: 24px;
     }
 
     #gemini-automator-panel .resize-handle:hover {
-      background: linear-gradient(135deg, transparent 50%, rgba(255, 255, 255, 0.15) 50%);
+      background: linear-gradient(135deg, transparent 50%, rgba(255, 255, 255, 0.12) 50%);
     }
 
     #gemini-automator-panel > div:first-of-type {
-      padding: 20px 24px;
+      padding: 24px 28px 28px;
       overflow-y: auto;
       overflow-x: hidden;
       flex: 1;
       min-height: 0;
-      background: linear-gradient(135deg, rgba(30, 30, 35, 0.7) 0%, rgba(25, 25, 30, 0.7) 100%);
-      backdrop-filter: blur(8px);
+      background: #0A0A0A;
     }
 
     #gemini-automator-panel label {
       display: block;
-      font-size: 13px;
-      font-weight: 500;
-      color: rgba(255, 255, 255, 0.7);
-      margin-bottom: 8px;
-      letter-spacing: -0.01em;
-      line-height: 1.4;
+      font-size: 15px;
+      font-weight: 600;
+      color: #FFFFFF;
+      margin-bottom: 10px;
+      letter-spacing: -0.02em;
+      line-height: 1.3;
     }
 
     #gemini-automator-panel textarea {
       width: 100%;
-      min-height: 100px;
-      max-height: 220px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1.5px solid rgba(255, 255, 255, 0.08);
-      border-radius: 10px;
-      color: #ffffff;
-      padding: 14px 16px;
-      font-family: 'JetBrains Mono', 'Consolas', monospace;
-      font-size: 13px;
+      min-height: 120px;
+      max-height: 240px;
+      background: #1C1C1E;
+      border: none;
+      border-radius: 16px;
+      color: #FFFFFF;
+      padding: 16px 18px;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 14px;
       resize: vertical;
-      line-height: 1.6;
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      line-height: 1.5;
+      transition: all 0.2s ease;
       box-sizing: border-box;
-    }
-
-    #gemini-automator-panel textarea:hover {
-      border-color: rgba(255, 255, 255, 0.12);
-      background: rgba(255, 255, 255, 0.04);
     }
 
     #gemini-automator-panel textarea:focus {
       outline: none;
-      border-color: rgba(66, 133, 244, 0.6);
-      background: rgba(255, 255, 255, 0.05);
-      box-shadow:
-        0 0 0 3px rgba(66, 133, 244, 0.12),
-        0 4px 12px rgba(0, 0, 0, 0.3);
+      background: #2C2C2E;
+      box-shadow: 0 0 0 2px rgba(255, 214, 10, 0.3);
     }
 
     #gemini-automator-panel textarea::placeholder {
-      color: rgba(255, 255, 255, 0.3);
+      color: #8E8E93;
     }
 
     #gemini-automator-panel input[type="number"] {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1.5px solid rgba(255, 255, 255, 0.08);
-      border-radius: 8px;
-      color: #ffffff;
-      padding: 10px 8px;
+      background: #1C1C1E;
+      border: none;
+      border-radius: 12px;
+      color: #FFFFFF;
+      padding: 12px 10px;
       text-align: center;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
       font-weight: 600;
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.2s ease;
       box-sizing: border-box;
-    }
-
-    #gemini-automator-panel input[type="number"]:hover {
-      border-color: rgba(255, 255, 255, 0.12);
-      background: rgba(255, 255, 255, 0.06);
     }
 
     #gemini-automator-panel input[type="number"]:focus {
       outline: none;
-      border-color: rgba(66, 133, 244, 0.6);
-      background: rgba(255, 255, 255, 0.06);
-      box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.12);
+      background: #2C2C2E;
+      box-shadow: 0 0 0 2px rgba(255, 214, 10, 0.3);
     }
 
     #gemini-automator-panel input[type="checkbox"] {
-      width: 44px;
-      height: 24px;
+      width: 51px;
+      height: 31px;
       appearance: none;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
+      background: #3A3A3C;
+      border-radius: 31px;
       position: relative;
       cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-      border: 1.5px solid rgba(255, 255, 255, 0.08);
-    }
-
-    #gemini-automator-panel input[type="checkbox"]:hover {
-      background: rgba(255, 255, 255, 0.12);
+      transition: all 0.25s ease;
+      border: none;
     }
 
     #gemini-automator-panel input[type="checkbox"]:checked {
-      background: linear-gradient(135deg, #4285f4 0%, #5294ff 100%);
-      border-color: rgba(66, 133, 244, 0.4);
-      box-shadow: 0 0 0 4px rgba(66, 133, 244, 0.12);
+      background: #FFD60A;
     }
 
     #gemini-automator-panel input[type="checkbox"]::before {
       content: '';
       position: absolute;
-      width: 18px;
-      height: 18px;
+      width: 27px;
+      height: 27px;
       border-radius: 50%;
-      background: #ffffff;
+      background: #FFFFFF;
       top: 2px;
       left: 2px;
-      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      transition: all 0.25s ease;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
     }
 
     #gemini-automator-panel input[type="checkbox"]:checked::before {
@@ -813,129 +756,83 @@
     }
 
     #gemini-automator-panel button {
-      background: linear-gradient(135deg, #4285f4 0%, #5294ff 100%);
       border: none;
-      border-radius: 10px;
-      color: #ffffff;
-      padding: 12px 18px;
+      border-radius: 999px;
       cursor: pointer;
       font-weight: 600;
-      font-size: 13px;
-      font-family: 'Inter', sans-serif;
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-      overflow: hidden;
+      font-size: 15px;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      transition: all 0.2s ease;
       letter-spacing: -0.02em;
       white-space: nowrap;
       flex: 1;
       min-width: 0;
-      box-shadow:
-        0 2px 8px rgba(66, 133, 244, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    }
-
-    #gemini-automator-panel button::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
-      opacity: 0;
-      transition: opacity 0.25s;
-    }
-
-    #gemini-automator-panel button:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow:
-        0 6px 20px rgba(66, 133, 244, 0.35),
-        inset 0 1px 0 rgba(255, 255, 255, 0.15);
-    }
-
-    #gemini-automator-panel button:hover:not(:disabled)::before {
-      opacity: 1;
-    }
-
-    #gemini-automator-panel button:active:not(:disabled) {
-      transform: translateY(-1px);
-      box-shadow:
-        0 3px 12px rgba(66, 133, 244, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      padding: 14px 24px;
     }
 
     #gemini-automator-panel button:disabled {
-      background: rgba(255, 255, 255, 0.05);
-      color: rgba(255, 255, 255, 0.3);
+      background: #1C1C1E;
+      color: #3A3A3C;
       cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
+      opacity: 0.5;
     }
 
-    #gemini-automator-panel button#ga-setup {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1.5px solid rgba(255, 255, 255, 0.1);
-      color: #ffffff;
-      box-shadow: none;
+    #gemini-automator-panel button#ga-start {
+      background: #FFD60A;
+      color: #000000;
+      box-shadow: 0 4px 12px rgba(255, 214, 10, 0.3);
     }
 
-    #gemini-automator-panel button#ga-setup:hover:not(:disabled) {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(255, 255, 255, 0.15);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    #gemini-automator-panel button#ga-start:hover:not(:disabled) {
+      background: #FFDF3C;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(255, 214, 10, 0.4);
     }
 
+    #gemini-automator-panel button#ga-start:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    #gemini-automator-panel button#ga-setup,
     #gemini-automator-panel button#ga-pause {
-      background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
-      box-shadow:
-        0 2px 8px rgba(245, 158, 11, 0.25),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      background: #2C2C2E;
+      color: #FFFFFF;
     }
 
+    #gemini-automator-panel button#ga-setup:hover:not(:disabled),
     #gemini-automator-panel button#ga-pause:hover:not(:disabled) {
-      box-shadow:
-        0 6px 20px rgba(245, 158, 11, 0.4),
-        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      background: #3A3A3C;
+      transform: translateY(-1px);
     }
 
     #gemini-automator-panel button#ga-stop {
-      background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
-      box-shadow:
-        0 2px 8px rgba(239, 68, 68, 0.25),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      background: #2C2C2E;
+      color: #FF453A;
     }
 
     #gemini-automator-panel button#ga-stop:hover:not(:disabled) {
-      box-shadow:
-        0 6px 20px rgba(239, 68, 68, 0.4),
-        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      background: #3A3A3C;
+      transform: translateY(-1px);
     }
 
     #gemini-automator-panel .setting-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin: 14px 0;
-      padding: 14px 16px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1.5px solid rgba(255, 255, 255, 0.06);
-      border-radius: 10px;
+      margin: 16px 0;
+      padding: 18px 20px;
+      background: #1C1C1E;
+      border: none;
+      border-radius: 16px;
       gap: 16px;
-      flex-wrap: wrap;
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    #gemini-automator-panel .setting-row:hover {
-      background: rgba(255, 255, 255, 0.05);
-      border-color: rgba(255, 255, 255, 0.1);
     }
 
     #gemini-automator-panel .setting-row label {
       margin: 0;
-      color: #ffffff;
-      font-size: 13px;
-      font-weight: 500;
-      letter-spacing: -0.01em;
+      color: #FFFFFF;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
       flex: 1;
       min-width: 120px;
     }
@@ -945,36 +842,23 @@
     }
 
     #gemini-automator-panel .status {
-      padding: 16px 18px;
-      background: rgba(66, 133, 244, 0.08);
-      border: 1.5px solid rgba(66, 133, 244, 0.2);
-      border-radius: 10px;
-      margin-top: 16px;
-      font-family: 'JetBrains Mono', monospace;
+      padding: 18px 20px;
+      background: #1C1C1E;
+      border: none;
+      border-radius: 16px;
+      margin-top: 20px;
       word-break: break-word;
-      position: relative;
-      overflow: hidden;
-    }
-
-    #gemini-automator-panel .status::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 3px;
-      height: 100%;
-      background: linear-gradient(180deg, #4285f4 0%, #5294ff 100%);
     }
 
     #gemini-automator-panel .progress {
       font-weight: 600;
-      color: #ffffff;
+      color: #FFD60A;
       margin-bottom: 8px;
-      font-size: 14px;
-      letter-spacing: -0.01em;
+      font-size: 15px;
+      letter-spacing: -0.02em;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
 
     #gemini-automator-panel .progress::before {
@@ -982,101 +866,65 @@
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: #4285f4;
-      box-shadow: 0 0 12px rgba(66, 133, 244, 0.8);
-      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      background: #FFD60A;
+      box-shadow: 0 0 12px rgba(255, 214, 10, 0.6);
+      animation: pulse 2s ease-in-out infinite;
     }
 
     #gemini-automator-panel .status > div:last-child {
-      color: rgba(255, 255, 255, 0.7);
-      font-size: 12px;
+      color: #8E8E93;
+      font-size: 13px;
       line-height: 1.5;
       word-wrap: break-word;
     }
 
     .toggle-panel {
       position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: linear-gradient(135deg, #4285f4 0%, #5294ff 100%);
-      border: 2px solid rgba(255, 255, 255, 0.2);
+      bottom: 28px;
+      right: 28px;
+      background: #FFD60A;
+      border: none;
       border-radius: 50%;
-      width: 58px;
-      height: 58px;
+      width: 64px;
+      height: 64px;
       cursor: pointer;
       z-index: 999999;
-      color: white;
-      font-size: 26px;
-      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      color: #000000;
+      font-size: 28px;
+      transition: all 0.2s ease;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow:
-        0 8px 24px rgba(66, 133, 244, 0.4),
-        0 4px 12px rgba(0, 0, 0, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      box-shadow: 0 8px 24px rgba(255, 214, 10, 0.4);
       animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .toggle-panel::before {
-      content: '';
-      position: absolute;
-      inset: -2px;
-      border-radius: 50%;
-      padding: 2px;
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), transparent);
-      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-
     .toggle-panel:hover {
-      transform: translateY(-4px) scale(1.05);
-      box-shadow:
-        0 12px 32px rgba(66, 133, 244, 0.5),
-        0 6px 16px rgba(0, 0, 0, 0.4),
-        inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    }
-
-    .toggle-panel:hover::before {
-      opacity: 1;
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: 0 12px 32px rgba(255, 214, 10, 0.5);
+      background: #FFDF3C;
     }
 
     .toggle-panel:active {
-      transform: translateY(-2px) scale(1.02);
-      box-shadow:
-        0 8px 20px rgba(66, 133, 244, 0.45),
-        0 4px 12px rgba(0, 0, 0, 0.35);
+      transform: translateY(0) scale(1);
     }
 
     /* Scrollbar styling */
     #gemini-automator-panel > div:first-of-type::-webkit-scrollbar {
-      width: 10px;
+      width: 8px;
     }
 
     #gemini-automator-panel > div:first-of-type::-webkit-scrollbar-track {
       background: transparent;
-      margin: 4px;
     }
 
     #gemini-automator-panel > div:first-of-type::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.12);
-      border-radius: 5px;
-      border: 2px solid transparent;
-      background-clip: padding-box;
-      transition: background 0.25s;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
     }
 
     #gemini-automator-panel > div:first-of-type::-webkit-scrollbar-thumb:hover {
-      background: rgba(255, 255, 255, 0.2);
-      background-clip: padding-box;
-    }
-
-    #gemini-automator-panel > div:first-of-type::-webkit-scrollbar-thumb:active {
       background: rgba(255, 255, 255, 0.25);
-      background-clip: padding-box;
     }
   `);
 
@@ -1138,13 +986,12 @@
     const promptsCounter = document.createElement('span');
     promptsCounter.id = 'ga-prompts-counter';
     promptsCounter.textContent = '0 prompts';
-    promptsCounter.style.fontSize = '12px';
+    promptsCounter.style.fontSize = '13px';
     promptsCounter.style.fontWeight = '600';
-    promptsCounter.style.color = 'rgba(66, 133, 244, 0.8)';
-    promptsCounter.style.padding = '4px 10px';
-    promptsCounter.style.background = 'rgba(66, 133, 244, 0.12)';
-    promptsCounter.style.borderRadius = '6px';
-    promptsCounter.style.fontFamily = "'JetBrains Mono', monospace";
+    promptsCounter.style.color = '#000000';
+    promptsCounter.style.padding = '6px 12px';
+    promptsCounter.style.background = '#FFD60A';
+    promptsCounter.style.borderRadius = '999px';
 
     promptsHeader.appendChild(promptsLabel);
     promptsHeader.appendChild(promptsCounter);
@@ -1225,12 +1072,11 @@
 
     // Delay description
     const delayDesc = document.createElement('div');
-    delayDesc.style.fontSize = '11px';
-    delayDesc.style.color = 'rgba(255, 255, 255, 0.5)';
+    delayDesc.style.fontSize = '13px';
+    delayDesc.style.color = '#8E8E93';
     delayDesc.style.marginTop = '-8px';
-    delayDesc.style.marginBottom = '12px';
-    delayDesc.style.fontStyle = 'italic';
-    delayDesc.textContent = 'Random delay between each prompt in seconds';
+    delayDesc.style.marginBottom = '16px';
+    delayDesc.textContent = 'Random delay between each prompt';
     panel.appendChild(delayDesc);
 
     // Remove Watermarks

@@ -10,13 +10,156 @@ console.log('Auto Gemini Content Script Loaded');
 const SELECTORS = {
     promptTextarea: 'rich-textarea .ql-editor[contenteditable="true"]',
     generateBtn: 'mat-icon[fonticon="send"]',
-    stopBtn: 'mat-icon[fonticon="stop"]',
-    toolsBtn: '#app-root > main > side-navigation-v2 > bard-sidenav-container > bard-sidenav-content > div.content-wrapper > div > div.content-container > chat-window > div > input-container > div > input-area-v2 > div > div > div.leading-actions-wrapper.ng-tns-c3776338945-8.ui-ready-fade-in.has-model-picker.ng-star-inserted > toolbox-drawer > div > div > button',
-    createImageOption: '#toolbox-drawer-menu > toolbox-drawer-item:nth-child(4) > button',
-    modelPickerBtn: '#app-root > main > side-navigation-v2 > bard-sidenav-container > bard-sidenav-content > div.content-wrapper > div > div.content-container > chat-window > div > input-container > div > input-area-v2 > div > div > div.trailing-actions-wrapper.ui-ready-fade-in.ng-tns-c3776338945-8 > div.model-picker-container.ng-tns-c3776338945-8.ng-star-inserted > bard-mode-switcher > div > button',
-    // Use dynamic selector with attribute starts-with for menu panel ID
-    proModelOption: '[id^="mat-menu-panel-"] > div > div > button.bard-mode-list-button:nth-child(6)'
+    stopBtn: 'mat-icon[fonticon="stop"]'
 };
+
+// ============================================
+// Robust Element Finders (Text-Based)
+// ============================================
+
+/**
+ * Find tools button by looking for common icon patterns
+ */
+function findToolsButton() {
+    // Try multiple strategies
+    const strategies = [
+        // Look for toolbox-drawer component
+        () => document.querySelector('toolbox-drawer button'),
+        // Look for button with tools/apps icon
+        () => Array.from(document.querySelectorAll('button mat-icon')).find(icon =>
+            icon.getAttribute('fonticon')?.includes('apps') ||
+            icon.getAttribute('fonticon')?.includes('tool')
+        )?.closest('button'),
+        // Look in input area for leading actions
+        () => document.querySelector('input-area-v2 .leading-actions-wrapper button')
+    ];
+
+    for (const strategy of strategies) {
+        const btn = strategy();
+        if (btn) return btn;
+    }
+    return null;
+}
+
+/**
+ * Find option by text content (case-insensitive, flexible matching)
+ * Searches within visible dropdown menus for multiple element types
+ */
+async function findOptionByText(searchText, retries = 10) {
+    const search = searchText.toLowerCase();
+
+    for (let attempt = 0; attempt < retries; attempt++) {
+        // Search in multiple element types that Gemini might use
+        const selectors = [
+            'button',                          // Standard buttons
+            'toolbox-drawer-item button',      // Tool menu items
+            '[role="menuitem"]',               // ARIA menu items
+            '[role="option"]',                 // ARIA options
+            'mat-option',                      // Material options
+            '.mat-menu-item',                  // Material menu items
+            'toolbox-drawer-item'              // Tool drawer items
+        ];
+
+        for (const selector of selectors) {
+            const elements = document.querySelectorAll(selector);
+            console.log(`Searching ${elements.length} ${selector} elements for "${searchText}"`);
+
+            for (const element of elements) {
+                const text = element.textContent?.trim().toLowerCase() || '';
+
+                // Log what we're finding (helps debug)
+                if (text.length > 0 && text.length < 50) {
+                    console.log(`  Found: "${text}"`);
+                }
+
+                if (text.includes(search)) {
+                    console.log(`Match found: "${text}" contains "${searchText}"`);
+                    // Return the button element if it's inside a wrapper
+                    const button = element.tagName === 'BUTTON' ? element : element.querySelector('button');
+                    return button || element;
+                }
+            }
+        }
+
+        // Wait and retry if not found
+        if (attempt < retries - 1) {
+            console.log(`Option "${searchText}" not found, waiting 300ms... (attempt ${attempt + 1}/${retries})`);
+            await sleep(300);
+        }
+    }
+
+    console.error(`Option "${searchText}" not found after ${retries} attempts`);
+    return null;
+}
+
+/**
+ * Find button in dropdown by searching for text (single attempt, fast)
+ * Searches for whole word matches to avoid false positives
+ * Falls back to selecting by index if no text match found
+ */
+function findButtonInDropdown(searchText, fallbackIndex = null) {
+    // Look for visible dropdown panels
+    const dropdowns = document.querySelectorAll('[role="menu"], [role="listbox"], .mat-menu-panel, [id*="menu-panel"]');
+
+    console.log(`\nSearching ${dropdowns.length} dropdown menus for "${searchText}"`);
+
+    for (const dropdown of dropdowns) {
+        // Only search visible dropdowns
+        if (dropdown.offsetParent === null) continue;
+
+        const buttons = dropdown.querySelectorAll('button');
+        console.log(`Found ${buttons.length} buttons in dropdown`);
+
+        // Search for the matching button
+        for (const button of buttons) {
+            const buttonText = button.textContent?.trim() || '';
+            const buttonTextLower = buttonText.toLowerCase();
+
+            // Use word boundary matching to avoid matching "pro" in "problems"
+            const searchLower = searchText.toLowerCase();
+            const wordBoundaryRegex = new RegExp(`\\b${searchLower}\\b`, 'i');
+
+            if (wordBoundaryRegex.test(buttonTextLower)) {
+                console.log(`MATCH: "${buttonText}" contains whole word "${searchText}"`);
+                return button;
+            }
+        }
+
+        // Fallback: select by index if no text match found
+        if (fallbackIndex !== null && buttons[fallbackIndex]) {
+            const fallbackButton = buttons[fallbackIndex];
+            const fallbackText = fallbackButton.textContent?.trim() || '';
+            console.log(`No text match found. Using fallback: button ${fallbackIndex + 1} ("${fallbackText}")`);
+            return fallbackButton;
+        }
+    }
+
+    console.log(`No button found containing "${searchText}" and no valid fallback`);
+    return null;
+}
+
+/**
+ * Find model picker button
+ */
+function findModelPickerButton() {
+    const strategies = [
+        // Look for bard-mode-switcher component
+        () => document.querySelector('bard-mode-switcher button'),
+        // Look in trailing actions for model picker
+        () => document.querySelector('.trailing-actions-wrapper .model-picker-container button'),
+        // Look for button with dropdown icon in input area
+        () => Array.from(document.querySelectorAll('input-area-v2 button mat-icon')).find(icon =>
+            icon.getAttribute('fonticon')?.includes('arrow_drop') ||
+            icon.getAttribute('fonticon')?.includes('expand')
+        )?.closest('button')
+    ];
+
+    for (const strategy of strategies) {
+        const btn = strategy();
+        if (btn) return btn;
+    }
+    return null;
+}
 
 // ============================================
 // Message Listener
@@ -66,59 +209,67 @@ async function setupGemini() {
 
     // Step 1: Check and select "Create image" tool if needed
     console.log('Checking Create Image tool...');
-    const toolsBtn = document.querySelector(SELECTORS.toolsBtn);
+    const toolsBtn = findToolsButton();
     if (!toolsBtn) {
-        throw new Error('Tools button not found');
+        throw new Error('Tools button not found - Gemini UI may have changed');
     }
 
     toolsBtn.click();
-    await sleep(500);
+    await sleep(800); // Extra time for menu to render
 
-    const createImageOption = document.querySelector(SELECTORS.createImageOption);
+    // Look for "Create images" option (try English, Vietnamese, then fall back to 3rd button)
+    console.log('Searching for Create Images option...');
+    const createImageOption = findButtonInDropdown('create images', 2) ||
+                             findButtonInDropdown('tạo hình ảnh', 2);
+
     if (!createImageOption) {
-        throw new Error('Create Image option not found');
+        throw new Error('Create Images option not found - check console for available buttons');
     }
 
     // Check if already selected
-    const isToolSelected = createImageOption.getAttribute('aria-checked') === 'true';
+    const isToolSelected = createImageOption.getAttribute('aria-checked') === 'true' ||
+                          createImageOption.classList.contains('is-selected') ||
+                          createImageOption.classList.contains('active');
     if (isToolSelected) {
-        console.log('Create Image tool already selected');
-        // Close dropdown by clicking tools button again
-        toolsBtn.click();
-        await sleep(500);
+        console.log('Create Images tool already selected');
+        toolsBtn.click(); // Close dropdown
+        await sleep(300);
     } else {
         createImageOption.click();
-        console.log('Create Image tool selected');
-        await sleep(1000);
+        console.log('Create Images tool selected');
+        await sleep(800);
     }
 
-    // Step 2: Check and select Pro model if needed
+    // Step 2: Check and select Pro/Advanced model if needed
     console.log('Checking Pro model...');
-    const modelPickerBtn = document.querySelector(SELECTORS.modelPickerBtn);
+    const modelPickerBtn = findModelPickerButton();
     if (!modelPickerBtn) {
-        throw new Error('Model picker button not found');
+        throw new Error('Model picker button not found - Gemini UI may have changed');
     }
 
     modelPickerBtn.click();
-    await sleep(500);
+    await sleep(800); // Extra time for menu to render
 
-    const proModelOption = document.querySelector(SELECTORS.proModelOption);
+    // Look for Pro model button (fall back to 3rd button for other languages)
+    console.log('Searching for Pro model...');
+    const proModelOption = findButtonInDropdown('pro', 2);
+
     if (!proModelOption) {
-        throw new Error('Pro model option not found');
+        throw new Error('Pro model button not found - check console for available buttons');
     }
 
-    // Check if already selected (either aria-checked or has is-selected class)
+    // Check if already selected
     const isModelSelected = proModelOption.getAttribute('aria-checked') === 'true' ||
-                           proModelOption.classList.contains('is-selected');
+                           proModelOption.classList.contains('is-selected') ||
+                           proModelOption.classList.contains('active');
     if (isModelSelected) {
         console.log('Pro model already selected');
-        // Close dropdown by clicking elsewhere or pressing Escape
-        document.body.click();
-        await sleep(500);
+        modelPickerBtn.click(); // Close dropdown
+        await sleep(300);
     } else {
         proModelOption.click();
         console.log('Pro model selected');
-        await sleep(1000);
+        await sleep(800);
     }
 
     console.log('Gemini setup complete!');

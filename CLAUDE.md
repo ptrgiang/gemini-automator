@@ -54,27 +54,43 @@ observer.observe(document.body, {
 
 **Why:** Polling with `sleep()` fails in background tabs due to throttling. However, note that despite using MutationObserver, the tab must still be active for Gemini to generate images.
 
-### 2. Material Design Selectors (content.js)
+### 2. Robust Element Selection (content.js)
 
-Gemini uses Material Design components. Selectors target icon fonts and specific DOM paths:
-
+**Core Selectors** (stable, icon-based):
 ```javascript
 const SELECTORS = {
   promptTextarea: 'rich-textarea .ql-editor[contenteditable="true"]',
   generateBtn: 'mat-icon[fonticon="send"]',
-  stopBtn: 'mat-icon[fonticon="stop"]',
-  toolsBtn: '#app-root > main > side-navigation-v2 > ...',
-  createImageOption: '#toolbox-drawer-menu > toolbox-drawer-item:nth-child(4)',
-  modelPickerBtn: '#app-root > main > side-navigation-v2 > ...',
-  proModelOption: '#mat-menu-panel-56 > div > div > button:nth-child(6)'
+  stopBtn: 'mat-icon[fonticon="stop"]'
 };
 ```
 
-**Important:**
-- Stop button visibility = generation in progress
-- Stop button disappears = generation complete
-- This is the most reliable completion signal
-- Auto-setup selects "Create Image" tool and Pro model before batch processing
+**Setup Selectors** (text-based, resilient to UI changes):
+Instead of fragile DOM paths, uses **helper functions** that search by:
+- Component names (`toolbox-drawer`, `bard-mode-switcher`)
+- Text content matching (case-insensitive)
+- Material icon patterns
+- Multiple fallback strategies
+
+```javascript
+findToolsButton()           // Finds tools menu by component/icon
+findModelPickerButton()     // Finds model picker by component/icon
+findOptionByText('text')    // Finds any option by visible text
+```
+
+**Why this approach:**
+- **Survives UI updates**: Text content changes less often than DOM structure
+- **Multiple fallbacks**: Tries several strategies to find each element
+- **Better errors**: Fails with clear messages when UI changes too much
+- **No hardcoded positions**: Doesn't rely on nth-child or specific IDs
+
+**Auto-setup process:**
+1. Opens tools menu → searches for "create images" (English) or "tạo hình ảnh" (Vietnamese)
+   - Fallback: Selects 3rd button if text not found (supports other languages)
+2. Opens model picker → searches for "pro" as whole word
+   - Fallback: Selects 3rd button if text not found (supports other languages)
+3. Checks if already selected before clicking
+4. Uses word boundary matching to avoid false positives (e.g., "pro" in "problems")
 
 ### 3. Chrome Tab Requirements (Critical Limitation)
 
@@ -89,16 +105,28 @@ await chrome.tabs.update(tabId, { active: true });
 ## Common Issues
 
 ### Gemini UI Changes
-If automation breaks, Gemini likely updated their UI. Check these selectors first:
-- Prompt textarea structure
-- Send button icon name
-- Stop button icon name
-- Tools button and Create Image option paths
-- Model picker and Pro model option paths
+If automation breaks, check these elements in order:
 
-Use browser DevTools on gemini.google.com to inspect current structure.
+**Most stable (rarely break):**
+- Prompt textarea: `rich-textarea .ql-editor`
+- Send button: `mat-icon[fonticon="send"]`
+- Stop button: `mat-icon[fonticon="stop"]`
 
-**Note:** The auto-setup feature (tool/model selection) uses long CSS selectors that may break with UI updates. If setup fails, it will log a warning but continue - users can manually configure Gemini settings.
+**Text-based setup (resilient but can fail):**
+- Tools menu: Searches for component names and icons
+- "Create image" option: Searches for text containing "create image", "imagen"
+- Model picker: Searches for component names
+- Pro/Advanced model: Searches for "flash experimental", "pro", "advanced"
+
+**If setup fails:**
+1. Check browser console for specific error messages
+2. Manually configure Gemini (select "Create image" tool and model)
+3. Report which text/component name changed in issues
+
+Use browser DevTools on gemini.google.com to inspect:
+- What text appears on the "Create image" button now
+- What text appears on the model options
+- Component tag names (toolbox-drawer, bard-mode-switcher, etc.)
 
 ### Content Script Not Loading
 1. Check manifest.json `matches` patterns include current Gemini URL
@@ -142,6 +170,11 @@ console.log('Sending message:', action);
 // content.js
 console.log('Received message:', request.action);
 ```
+
+**Console Logging Standards:**
+- Do not use emojis in console.log statements
+- Keep messages clear and concise
+- Use plain text for better readability across all environments
 
 ### UI Changes
 

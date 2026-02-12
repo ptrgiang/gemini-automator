@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gemini Automator
-// @namespace    https://github.com/gemini-automator
-// @version      1.3.1
+// @namespace    https://github.com/ptrgiang/gemini-automator
+// @version      1.3.2
 // @description  Batch image generation automation with automatic watermark removal for Gemini AI
 // @author       Truong Giang
 // @icon         https://www.google.com/s2/favicons?domain=gemini.google.com

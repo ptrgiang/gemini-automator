@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gemini Automator
 // @namespace    https://github.com/ptrgiang/gemini-automator
-// @version      1.3.5
+// @version      1.3.6
 // @description  Batch image generation automation with automatic watermark removal for Gemini AI
 // @author       Truong Giang
 // @icon         https://www.google.com/s2/favicons?domain=gemini.google.com
@@ -1124,12 +1124,45 @@
 
     // Prompts section
     const promptsDiv = document.createElement('div');
+
+    // Label with counter
+    const promptsHeader = document.createElement('div');
+    promptsHeader.style.display = 'flex';
+    promptsHeader.style.justifyContent = 'space-between';
+    promptsHeader.style.alignItems = 'center';
+    promptsHeader.style.marginBottom = '8px';
+
     const promptsLabel = document.createElement('label');
     promptsLabel.textContent = 'Prompts (one per line):';
+    promptsLabel.style.margin = '0';
+
+    const promptsCounter = document.createElement('span');
+    promptsCounter.id = 'ga-prompts-counter';
+    promptsCounter.textContent = '0 prompts';
+    promptsCounter.style.fontSize = '12px';
+    promptsCounter.style.fontWeight = '600';
+    promptsCounter.style.color = 'rgba(66, 133, 244, 0.8)';
+    promptsCounter.style.padding = '4px 10px';
+    promptsCounter.style.background = 'rgba(66, 133, 244, 0.12)';
+    promptsCounter.style.borderRadius = '6px';
+    promptsCounter.style.fontFamily = "'JetBrains Mono', monospace";
+
+    promptsHeader.appendChild(promptsLabel);
+    promptsHeader.appendChild(promptsCounter);
+
     const promptsTextarea = document.createElement('textarea');
     promptsTextarea.id = 'ga-prompts';
     promptsTextarea.placeholder = 'Enter your prompts here, one per line...\n\nExample:\nA serene mountain landscape at sunset\nA futuristic cyberpunk cityscape\nAbstract geometric patterns with vibrant colors';
-    promptsDiv.appendChild(promptsLabel);
+
+    // Update counter on input
+    const updateCounter = () => {
+      const prompts = promptsTextarea.value.split('\n').filter(p => p.trim());
+      const count = prompts.length;
+      promptsCounter.textContent = `${count} prompt${count !== 1 ? 's' : ''}`;
+    };
+    promptsTextarea.addEventListener('input', updateCounter);
+
+    promptsDiv.appendChild(promptsHeader);
     promptsDiv.appendChild(promptsTextarea);
     panel.appendChild(promptsDiv);
 
@@ -1137,13 +1170,14 @@
     const delayDiv = document.createElement('div');
     delayDiv.className = 'setting-row';
     delayDiv.style.display = 'grid';
-    delayDiv.style.gridTemplateColumns = '1fr auto 1fr auto';
-    delayDiv.style.gap = '12px';
+    delayDiv.style.gridTemplateColumns = 'auto 60px auto 60px';
+    delayDiv.style.gap = '10px';
     delayDiv.style.alignItems = 'center';
 
     const minDelayLabel = document.createElement('label');
-    minDelayLabel.textContent = 'Min Delay (sec):';
+    minDelayLabel.textContent = 'Min:';
     minDelayLabel.style.margin = '0';
+    minDelayLabel.style.fontSize = '13px';
     const minDelayInput = document.createElement('input');
     minDelayInput.type = 'number';
     minDelayInput.id = 'ga-min-delay';
@@ -1152,8 +1186,9 @@
     minDelayInput.max = '60';
 
     const maxDelayLabel = document.createElement('label');
-    maxDelayLabel.textContent = 'Max Delay (sec):';
+    maxDelayLabel.textContent = 'Max:';
     maxDelayLabel.style.margin = '0';
+    maxDelayLabel.style.fontSize = '13px';
     const maxDelayInput = document.createElement('input');
     maxDelayInput.type = 'number';
     maxDelayInput.id = 'ga-max-delay';

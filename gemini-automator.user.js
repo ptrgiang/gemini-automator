@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gemini Automator with Watermark Remover
 // @namespace    https://github.com/gemini-automator
-// @version      1.0.1
+// @version      1.0.2
 // @description  Batch image generation automation + automatic watermark removal for Gemini AI
 // @author       Truong Giang
 // @icon         https://www.google.com/s2/favicons?domain=gemini.google.com
@@ -555,45 +555,106 @@
   function createPanel() {
     console.log('[Gemini Automator] Creating UI panel...');
 
+    // Create panel
     const panel = document.createElement('div');
     panel.id = 'gemini-automator-panel';
     panel.style.display = 'none';
-    panel.innerHTML = `
-      <h2>✨ Gemini Automator</h2>
 
-      <div>
-        <label>Prompts (one per line):</label>
-        <textarea id="ga-prompts" placeholder="A serene mountain landscape&#10;A futuristic cityscape&#10;Abstract geometric patterns"></textarea>
-      </div>
+    // Title
+    const title = document.createElement('h2');
+    title.textContent = '✨ Gemini Automator';
+    panel.appendChild(title);
 
-      <div class="setting-row">
-        <label>Min Delay (sec):</label>
-        <input type="number" id="ga-min-delay" value="10" min="5" max="60">
-      </div>
+    // Prompts section
+    const promptsDiv = document.createElement('div');
+    const promptsLabel = document.createElement('label');
+    promptsLabel.textContent = 'Prompts (one per line):';
+    const promptsTextarea = document.createElement('textarea');
+    promptsTextarea.id = 'ga-prompts';
+    promptsTextarea.placeholder = 'A serene mountain landscape\nA futuristic cityscape\nAbstract geometric patterns';
+    promptsDiv.appendChild(promptsLabel);
+    promptsDiv.appendChild(promptsTextarea);
+    panel.appendChild(promptsDiv);
 
-      <div class="setting-row">
-        <label>Max Delay (sec):</label>
-        <input type="number" id="ga-max-delay" value="20" min="10" max="120">
-      </div>
+    // Min Delay
+    const minDelayDiv = document.createElement('div');
+    minDelayDiv.className = 'setting-row';
+    const minDelayLabel = document.createElement('label');
+    minDelayLabel.textContent = 'Min Delay (sec):';
+    const minDelayInput = document.createElement('input');
+    minDelayInput.type = 'number';
+    minDelayInput.id = 'ga-min-delay';
+    minDelayInput.value = '10';
+    minDelayInput.min = '5';
+    minDelayInput.max = '60';
+    minDelayDiv.appendChild(minDelayLabel);
+    minDelayDiv.appendChild(minDelayInput);
+    panel.appendChild(minDelayDiv);
 
-      <div class="setting-row">
-        <label>Remove Watermarks:</label>
-        <input type="checkbox" id="ga-remove-watermark" ${state.removeWatermark ? 'checked' : ''}>
-      </div>
+    // Max Delay
+    const maxDelayDiv = document.createElement('div');
+    maxDelayDiv.className = 'setting-row';
+    const maxDelayLabel = document.createElement('label');
+    maxDelayLabel.textContent = 'Max Delay (sec):';
+    const maxDelayInput = document.createElement('input');
+    maxDelayInput.type = 'number';
+    maxDelayInput.id = 'ga-max-delay';
+    maxDelayInput.value = '20';
+    maxDelayInput.min = '10';
+    maxDelayInput.max = '120';
+    maxDelayDiv.appendChild(maxDelayLabel);
+    maxDelayDiv.appendChild(maxDelayInput);
+    panel.appendChild(maxDelayDiv);
 
-      <div>
-        <button id="ga-setup">Setup Gemini</button>
-        <button id="ga-start">Start</button>
-        <button id="ga-pause" disabled>Pause</button>
-        <button id="ga-stop" disabled>Stop</button>
-      </div>
+    // Remove Watermarks
+    const watermarkDiv = document.createElement('div');
+    watermarkDiv.className = 'setting-row';
+    const watermarkLabel = document.createElement('label');
+    watermarkLabel.textContent = 'Remove Watermarks:';
+    const watermarkCheckbox = document.createElement('input');
+    watermarkCheckbox.type = 'checkbox';
+    watermarkCheckbox.id = 'ga-remove-watermark';
+    watermarkCheckbox.checked = state.removeWatermark;
+    watermarkDiv.appendChild(watermarkLabel);
+    watermarkDiv.appendChild(watermarkCheckbox);
+    panel.appendChild(watermarkDiv);
 
-      <div class="status">
-        <div class="progress" id="ga-progress">Ready</div>
-        <div id="ga-status"></div>
-      </div>
-    `;
+    // Buttons
+    const buttonsDiv = document.createElement('div');
+    const setupBtn = document.createElement('button');
+    setupBtn.id = 'ga-setup';
+    setupBtn.textContent = 'Setup Gemini';
+    const startBtn = document.createElement('button');
+    startBtn.id = 'ga-start';
+    startBtn.textContent = 'Start';
+    const pauseBtn = document.createElement('button');
+    pauseBtn.id = 'ga-pause';
+    pauseBtn.textContent = 'Pause';
+    pauseBtn.disabled = true;
+    const stopBtn = document.createElement('button');
+    stopBtn.id = 'ga-stop';
+    stopBtn.textContent = 'Stop';
+    stopBtn.disabled = true;
+    buttonsDiv.appendChild(setupBtn);
+    buttonsDiv.appendChild(startBtn);
+    buttonsDiv.appendChild(pauseBtn);
+    buttonsDiv.appendChild(stopBtn);
+    panel.appendChild(buttonsDiv);
 
+    // Status
+    const statusDiv = document.createElement('div');
+    statusDiv.className = 'status';
+    const progressDiv = document.createElement('div');
+    progressDiv.className = 'progress';
+    progressDiv.id = 'ga-progress';
+    progressDiv.textContent = 'Ready';
+    const statusText = document.createElement('div');
+    statusText.id = 'ga-status';
+    statusDiv.appendChild(progressDiv);
+    statusDiv.appendChild(statusText);
+    panel.appendChild(statusDiv);
+
+    // Toggle button
     const toggleBtn = document.createElement('button');
     toggleBtn.className = 'toggle-panel';
     toggleBtn.textContent = '⚡';
@@ -606,14 +667,10 @@
     document.body.appendChild(toggleBtn);
     document.body.appendChild(panel);
 
-    console.log('[Gemini Automator] ⚡ Toggle button added to page');
-    console.log('[Gemini Automator] Toggle button position:', {
-      top: toggleBtn.style.top || 'default (20px)',
-      right: toggleBtn.style.right || 'default (20px)'
-    });
+    console.log('[Gemini Automator] Toggle button added to page');
 
     // Event listeners
-    document.getElementById('ga-setup').onclick = async () => {
+    setupBtn.onclick = async () => {
       try {
         updateStatus('Setting up Gemini...');
         await setupGemini();
@@ -623,11 +680,11 @@
       }
     };
 
-    document.getElementById('ga-start').onclick = startAutomation;
-    document.getElementById('ga-pause').onclick = pauseAutomation;
-    document.getElementById('ga-stop').onclick = stopAutomation;
+    startBtn.onclick = startAutomation;
+    pauseBtn.onclick = pauseAutomation;
+    stopBtn.onclick = stopAutomation;
 
-    document.getElementById('ga-remove-watermark').onchange = (e) => {
+    watermarkCheckbox.onchange = (e) => {
       state.removeWatermark = e.target.checked;
     };
   }

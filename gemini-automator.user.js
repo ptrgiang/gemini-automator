@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gemini Automator
 // @namespace    https://github.com/ptrgiang/gemini-automator
-// @version      1.3.7
+// @version      1.3.8
 // @description  Batch image generation automation with automatic watermark removal for Gemini AI
 // @author       Truong Giang
 // @icon         https://www.google.com/s2/favicons?domain=gemini.google.com
@@ -698,7 +698,8 @@
       overflow-x: hidden;
       flex: 1;
       min-height: 0;
-      background: linear-gradient(135deg, rgba(25, 25, 25, 0.6) 0%, rgba(20, 20, 20, 0.6) 100%);
+      background: linear-gradient(135deg, rgba(30, 30, 35, 0.7) 0%, rgba(25, 25, 30, 0.7) 100%);
+      backdrop-filter: blur(8px);
     }
 
     #gemini-automator-panel label {
@@ -1221,6 +1222,16 @@
     delayDiv.appendChild(minContainer);
     delayDiv.appendChild(maxContainer);
     panel.appendChild(delayDiv);
+
+    // Delay description
+    const delayDesc = document.createElement('div');
+    delayDesc.style.fontSize = '11px';
+    delayDesc.style.color = 'rgba(255, 255, 255, 0.5)';
+    delayDesc.style.marginTop = '-8px';
+    delayDesc.style.marginBottom = '12px';
+    delayDesc.style.fontStyle = 'italic';
+    delayDesc.textContent = 'Random delay between each prompt in seconds';
+    panel.appendChild(delayDesc);
 
     // Remove Watermarks
     const watermarkDiv = document.createElement('div');

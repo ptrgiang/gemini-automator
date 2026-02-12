@@ -1,184 +1,313 @@
 # Gemini Automator
 
-A professional Chrome extension for automating batch image generation with Gemini AI.
+🚀 **Batch image generation automation + automatic watermark removal for Google Gemini AI**
 
-## Features
+A powerful userscript that automates batch prompt processing and removes NanoBanana watermarks from generated images.
 
-- **Auto-Configuration**: Automatically selects "Create Image" tool and Pro model
-- **Batch Processing**: Generate multiple images from a list of prompts automatically
-- **Smart Delays**: Randomized delays between requests to avoid rate limiting
-- **Progress Tracking**: Real-time progress monitoring with detailed activity logs
-- **Pause/Resume**: Full control over the automation process
+---
 
-## Important Note
+## ✨ Features
 
-**The Gemini tab must remain active and visible during automation.** Chrome's background tab optimizations prevent reliable automation in hidden tabs.
+### 🎨 Batch Image Generation
+- **Process multiple prompts automatically** - Enter prompts, click start
+- **Smart delays** - Configurable random delays between generations
+- **Full control** - Pause, resume, or stop anytime
+- **Progress tracking** - Real-time status updates
 
-**Recommended workflow:** Open Gemini in a separate window and work in your main browser window.
+### 🖼️ Automatic Watermark Removal
+- **Removes NanoBanana watermarks** - Clean, professional images
+- **Auto-detection** - Handles both 48px and 96px watermarks
+- **Real-time processing** - Works as images generate
+- **No quality loss** - Advanced alpha map algorithm
 
-## Design Philosophy
+### ⚙️ Auto-Configuration
+- **One-click setup** - Automatically selects "Create image" tool
+- **Model selection** - Auto-selects Pro model
+- **No manual configuration** - Just click and go
 
-This extension matches **Gemini's Dark Theme** using Material Design 3:
+---
 
-- **Typography**: Google Sans for headings, Google Sans Text for body - optimized for readability
-- **Color Palette**: Deep charcoal backgrounds (#131314) with Google Blue accents (#4285f4)
-- **Layout**: Spacious design with large corner radii (16-24px) and generous padding
-- **Visual Language**: Subtle glassmorphism effects with backdrop blur and soft shadows
-- **User Experience**: Cohesive with Gemini's interface, reduced eye strain, smooth transitions
+## 📦 Installation
 
-The design seamlessly integrates with Gemini's aesthetic while maintaining full functionality.
+### Step 1: Install a Userscript Manager
 
-## Installation
+Choose one (Tampermonkey recommended):
 
-1. Clone or download this repository
-2. Open Chrome and navigate to `chrome://extensions/`
-3. Enable "Developer mode" in the top right
-4. Click "Load unpacked" and select the extension directory
-5. Navigate to [Gemini](https://gemini.google.com)
-6. Click the extension icon to open the side panel
+- **[Tampermonkey](https://www.tampermonkey.net/)** - Chrome, Firefox, Edge, Safari
+- **[Violentmonkey](https://violentmonkey.github.io/)** - Chrome, Firefox, Edge
+- **[Greasemonkey](https://www.greasespot.net/)** - Firefox only
 
-## Usage
+### Step 2: Install the Script
 
-### Basic Workflow
+**✅ Watermark data is already included!** The script is ready to use.
 
-1. **Enter Prompts**: Add your image generation prompts in the text area, one prompt per line
+**Option A: Direct Install from GitHub (Recommended)**
+1. Click this link: [Install gemini-automator.user.js](https://github.com/ptrgiang/gemini-automator/raw/main/gemini-automator.user.js)
+2. Your userscript manager will prompt you to install
+3. Click **"Install"** - Done!
 
-2. **Configure Timing**: Set the minimum and maximum delay between generations (recommended: 10-20 seconds)
+**Option B: Manual Install**
+1. Copy the contents of [`gemini-automator.user.js`](https://raw.githubusercontent.com/ptrgiang/gemini-automator/main/gemini-automator.user.js)
+2. Open your userscript manager dashboard
+3. Click **"Create a new script"**
+4. Paste the code and save (Ctrl+S)
 
-3. **Setup Gemini** (first time only): Click "Setup Gemini" to automatically:
-   - Select the "Create Image" tool
-   - Switch to Pro model
+**Note:** The watermark removal data is loaded automatically from `watermark-data.js` hosted on GitHub.
 
-   *Note: Only needed once per session or if you change tools/model manually*
+### 🔄 Automatic Updates
 
-4. **Start Generation**: Click "Start Generation" to begin processing your prompts
+The script is configured to automatically check for updates from GitHub.
 
-5. **Monitor Progress**: Track completion status, current prompt, and activity logs in real-time
+**How it works:**
+- Tampermonkey checks for updates daily (configurable in settings)
+- When a new version is available, you'll be notified
+- Updates are downloaded and installed automatically
 
-6. **Control Execution**: Use Pause/Resume or Stop buttons as needed
+**Manual update check:**
+1. Click the Tampermonkey icon
+2. Click the **Dashboard** button
+3. Find "Gemini Automator with Watermark Remover"
+4. Click the **"Last updated"** timestamp
+5. Click **"Check for updates"**
 
-### Prompt Format
+**Update settings:**
+- Open Tampermonkey Dashboard → Settings
+- Under "Script Update" section:
+  - Check interval: Daily (recommended)
+  - Update type: Check for updates (or automatic install)
+
+---
+
+## 🎯 Usage
+
+### Quick Start
+
+1. **Navigate to Gemini**: https://gemini.google.com
+2. **Find the toggle**: Look for the **⚡** button (top-right corner)
+3. **Open panel**: Click the **⚡** button
+4. **Setup**: Click **"Setup Gemini"** button
+5. **Add prompts**: Enter one prompt per line
+6. **Configure delays**: Set min/max delay (default: 10-20 seconds)
+7. **Start**: Click **"Start"** button
+
+### Interface
 
 ```
-A serene mountain landscape at dawn
-A futuristic cityscape with flying vehicles
-Abstract geometric patterns in warm tones
+┌─────────────────────────────┐
+│ ✨ Gemini Automator         │
+├─────────────────────────────┤
+│ Prompts (one per line):     │
+│ ┌─────────────────────────┐ │
+│ │ A serene mountain...    │ │
+│ │ A futuristic city...    │ │
+│ │ Abstract patterns...    │ │
+│ └─────────────────────────┘ │
+│                             │
+│ Min Delay (sec): [10]       │
+│ Max Delay (sec): [20]       │
+│ Remove Watermarks: ☑        │
+│                             │
+│ [Setup] [Start] [Pause] [Stop] │
+│                             │
+│ Progress: 2/5               │
+│ Status: Processing...       │
+└─────────────────────────────┘
 ```
 
-Enter one prompt per line.
+### Controls
 
-## Technical Details
+| Button | Function |
+|--------|----------|
+| **Setup Gemini** | Auto-configure tool and model |
+| **Start** | Begin batch processing |
+| **Pause/Resume** | Pause or resume automation |
+| **Stop** | Stop completely |
+| **⚡ Toggle** | Show/hide control panel |
 
-### Architecture
+### Settings
 
-- **Manifest V3**: Modern Chrome extension architecture
-- **Side Panel API**: Clean, persistent UI that doesn't interfere with browsing
-- **Content Scripts**: Direct interaction with Gemini web interface
-- **Message Passing**: Robust communication between components
+| Setting | Description | Default |
+|---------|-------------|---------|
+| **Prompts** | One prompt per line | - |
+| **Min Delay** | Minimum seconds between prompts | 10 |
+| **Max Delay** | Maximum seconds between prompts | 20 |
+| **Remove Watermarks** | Automatically remove watermarks | ✓ |
 
-### File Structure
+---
+
+## 🔧 How It Works
+
+### Automation Flow
 
 ```
-gemini-automator/
-├── manifest.json          # Extension configuration
-├── background.js          # Service worker
-├── content.js             # Gemini page automation
-├── sidepanel.html         # Side panel UI
-├── sidepanel.css          # Material Design 3 styling
-├── sidepanel.js           # UI controller & batch orchestration
-├── icon.svg               # Source icon (star theme)
-├── icon16.png             # Extension icon (16x16)
-├── icon48.png             # Extension icon (48x48)
-├── icon128.png            # Extension icon (128x128)
-├── CLAUDE.md              # Development guidelines
-└── README.md              # Documentation
+Setup → Fill Prompt → Generate → Wait for Completion → Remove Watermark → Random Delay → Next Prompt
 ```
 
-### Selectors
+### Watermark Removal Process
 
-The extension interacts with Gemini's UI using Material Design selectors. If Gemini updates their interface, you may need to update the selectors in `content.js`:
+1. **Detect** - MutationObserver watches for new images
+2. **Fetch** - Get high-resolution version via `GM_xmlhttpRequest` (bypasses CORS)
+3. **Process** - Apply alpha map algorithm to remove watermark
+4. **Replace** - Update image with clean version
+
+### Technical Details
+
+**Why userscript vs Chrome extension?**
+
+| Feature | Userscript | Extension |
+|---------|-----------|-----------|
+| **CORS Bypass** | ✅ `GM_xmlhttpRequest` | ❌ Limited |
+| **Fetch Interception** | ✅ Full access | ❌ Restricted |
+| **Authenticated Requests** | ✅ Works perfectly | ❌ Issues |
+| **Installation** | ✅ One-click | ⚠️ Developer mode |
+| **Auto-updates** | ✅ Automatic | ❌ Manual reload |
+
+---
+
+## 🐛 Troubleshooting
+
+### UI Not Appearing
+
+**Problem:** Can't see the ⚡ button
+
+**Solutions:**
+1. Open console (F12) and check for: `[Gemini Automator] UI created`
+2. Look for the ⚡ button in top-right corner (might be hidden)
+3. Verify script is enabled in Tampermonkey
+4. Hard refresh page (Ctrl+Shift+R)
+5. Check console for errors
+
+### Watermarks Not Removed
+
+**Problem:** Watermarks still visible on images
+
+**Solutions:**
+1. Verify `BG_48_BASE64` and `BG_96_BASE64` are filled correctly in `watermark-data.js`
+2. Check that `@require` path in userscript points to correct location
+3. Check watermark removal is enabled (checkbox)
+4. Open console and look for: `[Gemini Automator] Watermark removed`
+5. If you see "watermark removal disabled" warning, check watermark-data.js is loaded
+6. Verify the base64 data format is correct: `data:image/png;base64,iVBORw0KGgo...`
+
+### Automation Not Starting
+
+**Problem:** Nothing happens when clicking "Start"
+
+**Solutions:**
+1. Make sure prompts are entered (one per line)
+2. Check console for error messages
+3. Click "Setup Gemini" first
+4. Verify you're on the main Gemini chat page
+
+### Setup Fails
+
+**Problem:** "Setup failed" error
+
+**Solutions:**
+1. Try manually selecting "Create image" tool and Pro model
+2. Check console for specific error message
+3. Gemini UI might have changed - report issue with console logs
+4. Continue with automation anyway (setup not always required)
+
+---
+
+## 📊 Console Messages
+
+Monitor progress in browser console (F12):
+
+```bash
+[Gemini Automator] Initializing...
+[Gemini Automator] DOM ready
+[Gemini Automator] UI created - Look for ⚡ button in top-right corner!
+[Gemini Automator] ⚡ Toggle button added to page
+[Gemini Automator] Watermark removal ready
+[Gemini Automator] Ready! Click the ⚡ button to open the panel.
+
+# During use:
+[Gemini Automator] Setting up Gemini...
+[Gemini Automator] Setup complete
+[Gemini Automator] Found 2 images to process
+[Gemini Automator] Watermark removed
+```
+
+---
+
+## 🎨 Customization
+
+### Change UI Position
+
+Edit the CSS in the script:
 
 ```javascript
-const SELECTORS = {
-  // Core automation
-  promptTextarea: 'rich-textarea .ql-editor[contenteditable="true"]',
-  generateBtn: 'mat-icon[fonticon="send"]',
-  stopBtn: 'mat-icon[fonticon="stop"]',
+#gemini-automator-panel {
+  top: 80px;    // Change this
+  right: 20px;  // Or this
+}
 
-  // Auto-setup (tool & model selection)
-  toolsBtn: '#app-root > main > side-navigation-v2 > ...',
-  createImageOption: '#toolbox-drawer-menu > toolbox-drawer-item:nth-child(4) > button',
-  modelPickerBtn: '#app-root > main > side-navigation-v2 > ...',
-  proModelOption: '[id^="mat-menu-panel-"] > div > div > button.bard-mode-list-button:nth-child(6)'
-};
-```
-
-**Key Detection Methods:**
-- Stop button visibility = generation in progress
-- Stop button disappears = generation complete (most reliable signal)
-- MutationObserver monitors DOM changes (not throttled in background tabs)
-
-## Safety Features
-
-- **Smart Setup Verification**: Checks if tools/model are already configured before making changes
-- **Input Validation**: Validates prompts and settings before starting
-- **Tab Detection**: Ensures Gemini is open and active before processing
-- **Error Handling**: Graceful error handling with color-coded activity logs
-- **Rate Limiting**: Configurable delays (5-120 seconds) to respect API limits
-- **Progress Tracking**: Real-time updates after each completion, not during delays
-
-## Customization
-
-### Adjust Delays
-
-Modify the delay range in the side panel UI to control the pace of generation:
-- **Faster**: 5-10 seconds (higher risk of rate limiting)
-- **Recommended**: 10-20 seconds (balanced)
-- **Conservative**: 20-30 seconds (safest)
-
-### Color Scheme
-
-The extension uses Gemini's Material Design 3 dark palette:
-
-```css
-:root {
-  --color-accent: #4285f4;              /* Google Blue */
-  --color-bg: #131314;                  /* Deep Charcoal */
-  --color-surface: #1e1f20;             /* Surface Gray */
-  --color-surface-elevated: #28292a;    /* Elevated Surface */
-  --color-text-primary: #e3e3e3;        /* Off-White */
-  /* ... more variables in sidepanel.css */
+.toggle-panel {
+  top: 20px;    // Toggle button position
+  right: 20px;
 }
 ```
 
-## Troubleshooting
+### Modify Delay Calculation
 
-### Extension not working
+Find this code and adjust:
 
-1. Ensure you're on `gemini.google.com`
-2. Check that the extension is enabled in `chrome://extensions/`
-3. Reload the Gemini page
-4. Check the browser console for errors
+```javascript
+const minDelay = parseInt(document.getElementById('ga-min-delay').value) * 1000;
+const maxDelay = parseInt(document.getElementById('ga-max-delay').value) * 1000;
+const delay = Math.random() * (maxDelay - minDelay) + minDelay;
+```
 
-### Setup button fails
+### Disable Watermark Removal
 
-If auto-setup fails, it's likely Gemini updated their UI:
-1. Manually select "Create Image" tool and Pro model
-2. Update selectors in `content.js` to match new structure
-3. The extension will still work - setup is optional
+Set to `false` by default:
 
-### Selectors not matching
+```javascript
+const state = {
+  removeWatermark: false  // Change to false
+};
+```
 
-If Gemini updates their UI:
-1. Open Chrome DevTools on gemini.google.com
-2. Inspect the target elements (prompt box, buttons, etc.)
-3. Update selectors in `content.js` to match new structure
-4. Pay special attention to dynamic menu panel IDs (use `[id^="..."]` patterns)
+---
 
-## License
+## 🔐 Permissions
 
-MIT License - feel free to modify and distribute as needed.
+```javascript
+// @grant        GM_xmlhttpRequest  // Bypass CORS for image fetching
+// @grant        GM_addStyle        // Inject custom CSS
+```
 
-## Credits
+These permissions allow:
+- **GM_xmlhttpRequest**: Fetch images from googleusercontent.com without CORS restrictions
+- **GM_addStyle**: Add custom styling for the UI panel
 
-Built with a focus on professional design and reliable automation.
+---
+
+## 📝 License
+
+MIT License - Free to use and modify!
+
+---
+
+## 🙏 Credits
+
+- **Watermark Removal**: Advanced alpha map algorithm
+- **UI Design**: Material Design 3 (Google)
+- **Automation**: Gemini AI interaction patterns
+
+---
+
+## 🆘 Support
+
+**Having issues?**
+
+1. Check browser console (F12) for error messages
+2. Verify all installation steps completed
+3. Try the troubleshooting section above
+4. Open an issue with console logs
+
+---
+
+**Made with ⚡ for Gemini power users**

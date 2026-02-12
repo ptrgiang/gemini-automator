@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gemini Automator
 // @namespace    https://github.com/ptrgiang/gemini-automator
-// @version      1.3.3
+// @version      1.3.4
 // @description  Batch image generation automation with automatic watermark removal for Gemini AI
 // @author       Truong Giang
 // @icon         https://www.google.com/s2/favicons?domain=gemini.google.com
@@ -1123,7 +1123,7 @@
 
     // Title
     const title = document.createElement('h2');
-    title.innerHTML = '<span style="font-size: 18px; margin-right: 6px;">⚡</span> Gemini Automator';
+    title.textContent = '⚡ Gemini Automator';
     title.className = 'panel-header';
     panel.appendChild(title);
 
